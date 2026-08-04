@@ -47,7 +47,7 @@
           return (Collection)p_177514_.invoke(object);
        } catch (ReflectiveOperationException reflectiveoperationexception) {
           throw new RuntimeException(reflectiveoperationexception);
-@@ -116,9 +_,9 @@
+@@ -116,17 +_,19 @@
        GameTest gametest = p_177516_.getAnnotation(GameTest.class);
        String s = p_177516_.getDeclaringClass().getSimpleName();
        String s1 = s.toLowerCase();
@@ -58,9 +58,10 @@
 +      String s3 = net.minecraftforge.gametest.ForgeGameTestHooks.getTestTemplate(p_177516_, gametest, s2);
 +      String s4 = net.minecraftforge.gametest.ForgeGameTestHooks.getTestBatch(p_177516_, gametest);
        Rotation rotation = StructureUtils.getRotationForRotationSteps(gametest.rotationSteps());
-       return new TestFunction(s4, s2, s3, rotation, gametest.timeoutTicks(), gametest.setupTicks(), gametest.required(), gametest.requiredSuccesses(), gametest.attempts(), (Consumer<net.minecraft.gametest.framework.GameTestHelper>)turnMethodIntoConsumer(p_177516_));
+-      return new TestFunction(s4, s2, s3, rotation, gametest.timeoutTicks(), gametest.setupTicks(), gametest.required(), gametest.requiredSuccesses(), gametest.attempts(), (Consumer<net.minecraft.gametest.framework.GameTestHelper>)turnMethodIntoConsumer(p_177516_));
++      return new TestFunction(s4, s2, s3, rotation, gametest.timeoutTicks(), gametest.setupTicks(), gametest.required(), gametest.requiredSuccesses(), gametest.attempts(), (Consumer<net.minecraft.gametest.framework.GameTestHelper>)turnMethodIntoConsumer(p_177516_), gametest.skyAccess());
     }
-@@ -126,7 +_,9 @@
+ 
     private static Consumer<?> turnMethodIntoConsumer(Method p_177520_) {
        return (p_177512_) -> {
           try {

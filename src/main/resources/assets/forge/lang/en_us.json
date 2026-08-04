@@ -172,6 +172,8 @@
   "forge.configgui.forceSystemNanoTime": "Force System.nanoTime",
   "forge.configgui.useItemWithDurationZero": "Allow Use Item with Duration of 0",
   "forge.configgui.useItemWithDurationZero.tooltip": "Set this to true to enable living entities to use items with durations of 0. Fixes being able to use Eyes of Ender repeatedly by holding down the use button. Disabled by default as it could change interactions with items of existing mods.",
+  "forge.configgui.fixGameTestBlockPosAsserts": "Fix GameTest BlockPos Asserts",
+  "forge.configgui.fixGameTestBlockPosAsserts.tooltip": "Set this to true to fix BlockPos assertions in game tests to account for rotations and generally behave as they would in 1.21.3.\nThis is kept in the common config so that development environments that rely on old behavior do not need to continuously set this in a server config.",
 
   "forge.configgui.zoomInMissingModelTextInGui.tooltip": "Toggle off to make missing model text in the gui fit inside the slot.",
   "forge.configgui.zoomInMissingModelTextInGui": "Zoom in Missing model text in the GUI",
@@ -189,6 +191,8 @@
   "forge.configgui.showLoadWarnings": "Show Load Warnings",
   "forge.configgui.allowMipmapLowering.tooltip": "When enabled, Forge will allow mipmaps to be lowered in real-time. This is the default behavior in vanilla. Use this if you experience issues with resource packs that use textures lower than 8x8.",
   "forge.configgui.allowMipmapLowering": "Allow mipmap lowering",
+  "forge.configgui.fixNeighborUpdateOrder": "Fix Neighbor Update Order",
+  "forge.configgui.fixNeighborUpdateOrder.tooltip": "Set this to true to fix the neighbor update order to match vanilla.",
 
   "forge.configgui.disableVersionCheck.tooltip": "Set to true to disable Forge version check mechanics. Forge queries a small json file on our server for version information. For more details see the ForgeVersion class in our github.",
   "forge.configgui.disableVersionCheck": "Disable Forge Version Check",

@@ -32,6 +32,8 @@ public class ForgeConfig {
 
         public final BooleanValue useItemWithDurationZero;
 
+        public final BooleanValue fixNeighborUpdateOrder;
+
         Server(ForgeConfigSpec.Builder builder) {
             builder.comment("Server configuration settings")
                    .push("server");
@@ -81,6 +83,11 @@ public class ForgeConfig {
                     .translation("forge.configgui.useItemWithDurationZero")
                     .define("useItemWithDurationZero", false);
 
+            fixNeighborUpdateOrder = builder
+                    .comment("Set this to true to fix the neighbor update order to match vanilla.")
+                    .translation("forge.configgui.fixNeighborUpdateOrder")
+                    .define("fixNeighborUpdateOrder", false);
+
             builder.pop();
         }
 
@@ -94,9 +101,18 @@ public class ForgeConfig {
      */
     public static class Common {
 
+        public final ForgeConfigSpec.BooleanValue fixGameTestBlockPosAsserts;
+
         Common(ForgeConfigSpec.Builder builder) {
-            builder.comment("[DEPRECATED / NO EFFECT]: General configuration settings")
+            builder.comment("General configuration settings")
                     .push("general");
+
+            fixGameTestBlockPosAsserts = builder
+                    .comment("""
+                    Set this to true to fix BlockPos assertions in game tests to account for rotations and generally behave as they would in 1.21.3.
+                    This is kept in the common config so that development environments that rely on old behavior do not need to continuously set this in a server config.""")
+                    .translation("forge.configgui.fixGameTestBlockPosAsserts")
+                    .define("fixGameTestBlockPosAsserts", true);
 
             builder.pop();
         }

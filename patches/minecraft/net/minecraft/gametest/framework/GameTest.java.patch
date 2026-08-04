@@ -1,0 +1,9 @@
+--- a/net/minecraft/gametest/framework/GameTest.java
++++ b/net/minecraft/gametest/framework/GameTest.java
+@@ -23,4 +_,6 @@
+    int attempts() default 1;
+ 
+    int requiredSuccesses() default 1;
++
++   boolean skyAccess() default false;
+ }
