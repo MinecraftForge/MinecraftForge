@@ -9,7 +9,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.eventbus.api.Cancelable;
 
-public class LivingSwapItemsEvent extends LivingEvent
+public abstract class LivingSwapItemsEvent extends LivingEvent
 {
 
     public LivingSwapItemsEvent(LivingEntity entity)
