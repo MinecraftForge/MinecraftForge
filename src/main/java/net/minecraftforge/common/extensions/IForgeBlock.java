@@ -38,6 +38,9 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.WitherSkullEntity;
 import net.minecraft.fluid.IFluidState;
 import net.minecraft.block.Blocks;
+import net.minecraft.item.HoeItem;
+import net.minecraft.item.ShovelItem;
+import net.minecraft.item.AxeItem;
 import net.minecraft.potion.Effects;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.ItemStack;
@@ -1070,5 +1073,25 @@ public interface IForgeBlock
     default boolean shouldDisplayFluidOverlay(BlockState state, ILightReader world, BlockPos pos, IFluidState fluidState)
     {
         return state.getBlock() == Blocks.GLASS || state.getBlock() instanceof StainedGlassBlock;
+    }
+
+    /**
+     * Returns the state that this block should transform into when right clicked by a tool.
+     * For example: Used to determine if an axe can strip, a shovel can path, or a hoe can till.
+     * Return null if vanilla behavior should be disabled.
+     *
+     * @param state The current state
+     * @param world The world
+     * @param pos The block position in world
+     * @param player The player clicking the block
+     * @param stack The stack being used by the player
+     * @return The resulting state after the action has been performed
+     */
+    @Nullable
+    default BlockState getToolModifiedState(BlockState state, World world, BlockPos pos, PlayerEntity player, ItemStack stack, ToolType toolType)
+    {
+        if (toolType == ToolType.AXE) return AxeItem.getAxeStrippingState(state);
+        else if(toolType == ToolType.HOE) return HoeItem.getHoeTillingState(state);
+        else return toolType == ToolType.SHOVEL ? ShovelItem.getShovelPathingState(state) : null;
     }
 }
