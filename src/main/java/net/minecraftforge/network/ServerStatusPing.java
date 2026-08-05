@@ -225,7 +225,7 @@ public record ServerStatusPing(
                 var modVersion = isIgnoreServerOnly ? IExtensionPoint.DisplayTest.IGNORESERVERONLY : buf.readUtf();
                 for (var i1 = 0; i1 < channelSize; i1++) {
                     var channelName = buf.readUtf();
-                    var channelVersion = buf.readVarInt();
+                    var channelVersion = readChannelVersion(fmlNetworkVersion, buf);
                     var requiredOnClient = buf.readBoolean();
                     final Identifier id = Identifier.fromNamespaceAndPath(modId, channelName);
                     channels.put(id, new ChannelData(id, channelVersion, requiredOnClient));
@@ -237,7 +237,7 @@ public record ServerStatusPing(
             var nonModChannelCount = buf.readVarInt();
             for (var i = 0; i < nonModChannelCount; i++) {
                 var channelName = buf.readIdentifier();
-                var channelVersion = buf.readVarInt();
+                var channelVersion = readChannelVersion(fmlNetworkVersion, buf);
                 var requiredOnClient = buf.readBoolean();
                 channels.put(channelName, new ChannelData(channelName, channelVersion, requiredOnClient));
             }
@@ -246,6 +246,22 @@ public record ServerStatusPing(
         }
 
         return new ServerStatusPing(channels, mods, fmlNetworkVersion, truncated);
+    }
+
+    private static int readChannelVersion(int fmlNetworkVersion, FriendlyByteBuf buf) {
+    	// For versions 1-3, before re-writing the network code, the version was any arbitrary String the mod provided,
+    	// and a stupid list of emojies for "missing" or "don't care". So do a best effort to convert the string to a int
+    	// but if that fails return -1
+    	if (fmlNetworkVersion >= 1 && fmlNetworkVersion <= 3) {
+    		var versionStr = buf.readUtf(); // This can throw a DecoderException, if it reads a invalid string, this propagating is intentional
+    		try {
+    			return Integer.parseInt(versionStr);
+    		} catch (NumberFormatException e) {
+    			return -1;
+    		}
+    	} else {
+    		return buf.readVarInt();
+    	}
     }
 
     /**

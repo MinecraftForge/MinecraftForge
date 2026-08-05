@@ -23,6 +23,10 @@ import net.minecraftforge.network.packets.ModVersions;
 
 public class NetworkContext {
     private static final String MARKER = "FORGE";
+    /**
+     * Versions 1, 2 and 3 were used by older Forge versions,
+     * so if this ever needs to be bumped, start from 4.
+     */
     public static final int NET_VERSION = 0;
     private static final AttributeKey<NetworkContext> CHANNEL_KEY = AttributeKey.valueOf("forge:netcontext");
 
