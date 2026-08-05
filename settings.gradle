@@ -100,11 +100,11 @@ dependencyResolutionManagement.versionCatalogs {
         description = 'Libraries used by Forge and its subprojects.'
 
         plugin 'licenser',    'net.minecraftforge.licenser'        version '1.2.0'
-        plugin 'versions',    'io.github.ben-manes.versions'       version '0.56.0'
+        plugin 'versions',    'io.github.ben-manes.versions'       version '0.59.0'
         plugin 'gradleutils', 'net.minecraftforge.gradleutils'     version '3.4.5'
         plugin 'gitversion',  'net.minecraftforge.gitversion'      version '3.1.7'
         plugin 'changelog',   'net.minecraftforge.changelog'       version '3.2.2'
-        plugin 'renamer',     'net.minecraftforge.renamer'         version '1.1.5'
+        plugin 'renamer',     'net.minecraftforge.renamer'         version '1.1.7'
         plugin 'download',    'de.undercouch.download'             version '5.6.0'
         plugin 'jarsigner',   'net.minecraftforge.gradlejarsigner' version '1.2.1'
         plugin 'apt',         'com.diffplug.eclipse.apt'           version '4.4.1'
