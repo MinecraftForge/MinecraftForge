@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/block/BlockModelShaper.java
 +++ b/net/minecraft/client/renderer/block/BlockModelShaper.java
-@@ -17,8 +_,13 @@
+@@ -17,8 +_,15 @@
          this.modelManager = p_110880_;
      }
  
@@ -11,7 +11,9 @@
 +    }
 +
 +    public TextureAtlasSprite getParticleIcon(BlockState p_110883_, net.minecraft.world.level.Level level, net.minecraft.core.BlockPos pos) {
-+       return this.getBlockModel(p_110883_).particleIcon(level.getModelDataManager().getAt(pos));
++        net.minecraftforge.client.model.data.ModelData data = level.getModelDataManager().getAtOrEmpty(pos);
++        BlockStateModel model = this.getBlockModel(p_110883_);
++        return model.particleIcon(model.getModelData(level, pos, p_110883_, data));
      }
  
      public BlockStateModel getBlockModel(BlockState p_110894_) {
