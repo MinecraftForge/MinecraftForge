@@ -28,7 +28,7 @@ public interface SimpleFlow<BUF extends FriendlyByteBuf, BASE> extends SimplePro
      */
     default <MSG extends BASE> SimpleFlow<BUF, BASE> addMain(Class<MSG> type, StreamCodec<BUF, MSG> codec, BiConsumer<MSG, CustomPayloadEvent.Context> handler) {
         return add(type, codec, (msg, ctx) -> {
-            ctx.enqueueWork(() -> handler.accept(msg, ctx));
+            net.minecraftforge.common.ForgeHooks.enqueuePacket(handler, msg, ctx);
             ctx.setPacketHandled(true);
         });
     }

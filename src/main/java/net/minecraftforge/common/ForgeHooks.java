@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
@@ -52,6 +53,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.Connection;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.PacketListener;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.VarInt;
 import net.minecraft.network.chat.ClickEvent;
@@ -104,6 +106,8 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.network.protocol.PacketType;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.network.protocol.common.custom.DiscardedPayload;
 import net.minecraft.network.syncher.EntityDataSerializer;
@@ -1313,5 +1317,33 @@ public final class ForgeHooks {
         );
 
         return Optional.of(ret);
+    }
+
+    // This is similar to PacketUtils.ensureRunningOnSameThread, we can't use the normal LogicalSidedProvider.WORKQUEUE because it is processed after packets.
+    // So any vanilla packets that are received after this packet, will be processed before our enqueued packet.
+    public static <MSG> void enqueuePacket(BiConsumer<MSG, CustomPayloadEvent.Context> handler, MSG packet, CustomPayloadEvent.Context context) {
+        var processor = LogicalSidedProvider.PACKETS.get(context.isClientSide());
+        if (!processor.isSameThread())
+            processor.scheduleIfPossible(context.getConnection().getPacketListener(), new DummyPacket<>(handler, packet, context));
+        else
+            handler.accept(packet, context);
+    }
+
+    private static final record DummyPacket<MSG>(
+        BiConsumer<MSG, CustomPayloadEvent.Context> handler,
+        MSG packet,
+        CustomPayloadEvent.Context context
+    ) implements Packet<PacketListener> {
+        private static final PacketType<DummyPacket<?>> TYPE = new PacketType<>(PacketFlow.CLIENTBOUND, Identifier.fromNamespaceAndPath("forge", "dummy_for_schedualing"));
+
+        @Override
+        public PacketType<DummyPacket<?>> type() {
+            return TYPE;
+        }
+
+        @Override
+        public void handle(PacketListener listener) {
+            handler.accept(packet, context);
+        }
     }
 }
