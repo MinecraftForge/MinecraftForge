@@ -6,6 +6,7 @@
 package net.minecraftforge.common.util;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.PacketProcessor;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.TickTask;
 import net.minecraft.util.thread.BlockableEventLoop;
@@ -21,6 +22,7 @@ import org.jetbrains.annotations.ApiStatus;
 public class LogicalSidedProvider<T> {
     public static final LogicalSidedProvider<BlockableEventLoop<? super TickTask>> WORKQUEUE = new LogicalSidedProvider<>(Supplier::get, Supplier::get);
     public static final LogicalSidedProvider<Optional<Level>> CLIENTWORLD = new LogicalSidedProvider<>((c)-> Optional.of(c.get().level), (s)->Optional.empty());
+    public static final LogicalSidedProvider<PacketProcessor> PACKETS = new LogicalSidedProvider<>(client -> client.get().packetProcessor(), server -> server.get().packetProcessor());
 
     public T get(LogicalSide side) {
         return side == LogicalSide.CLIENT ? clientSide.apply(client) : serverSide.apply(server);
