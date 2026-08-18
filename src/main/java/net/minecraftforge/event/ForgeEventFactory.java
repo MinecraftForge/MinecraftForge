@@ -21,6 +21,7 @@ import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.util.random.WeightedList;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.chunk.storage.SerializableChunkData;
 import net.minecraftforge.common.util.Result;
 import org.jetbrains.annotations.ApiStatus;
@@ -354,8 +355,8 @@ public final class ForgeEventFactory {
         return BlockEvent.FluidPlaceBlockEvent.BUS.fire(new BlockEvent.FluidPlaceBlockEvent(level, pos, liquidPos, state)).getNewState();
     }
 
-    public static ItemTooltipEvent onItemTooltip(ItemStack itemStack, @Nullable Player entityPlayer, List<Component> list, TooltipFlag flags) {
-        return ItemTooltipEvent.BUS.fire(new ItemTooltipEvent(itemStack, entityPlayer, list, flags));
+    public static ItemTooltipEvent onItemTooltip(ItemStack itemStack, @Nullable Player entityPlayer, List<Component> list, TooltipFlag flags, Item.TooltipContext context, TooltipDisplay display) {
+        return ItemTooltipEvent.BUS.fire(new ItemTooltipEvent(itemStack, entityPlayer, list, flags, context, display));
     }
 
     public static SummonAidEvent fireZombieSummonAid(Zombie zombie, Level level, int x, int y, int z, LivingEntity attacker, double summonChance) {
