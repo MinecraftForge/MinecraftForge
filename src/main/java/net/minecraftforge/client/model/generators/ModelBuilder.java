@@ -361,6 +361,10 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
                     partObj.addProperty("shade", part.shade);
                 }
 
+                if (!part.getFaceData().equals(ForgeFaceData.DEFAULT)) {
+                    partObj.add("forge_data", ForgeFaceData.CODEC.encodeStart(JsonOps.INSTANCE, part.getFaceData()).result().get());
+                }
+
                 JsonObject faces = new JsonObject();
                 for (Direction dir : Direction.values()) {
                     BlockElementFace face = part.faces.get(dir);
