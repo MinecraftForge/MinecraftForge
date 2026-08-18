@@ -96,7 +96,7 @@
              List<Component> lines = Lists.newArrayList();
              lines.add(this.getStyledHoverName());
              this.addDetailsToTooltip(context, display, player, tooltipFlag, lines::add);
-+            net.minecraftforge.event.ForgeEventFactory.onItemTooltip(this, player, lines, tooltipFlag);
++            net.minecraftforge.event.ForgeEventFactory.onItemTooltip(this, player, lines, tooltipFlag, context, display);
              return lines;
          }
      }
