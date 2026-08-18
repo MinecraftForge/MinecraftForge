@@ -16,6 +16,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraftforge.eventbus.api.bus.EventBus;
 import net.minecraftforge.eventbus.api.event.MutableEvent;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,6 +36,7 @@ public final class ItemTooltipEvent extends MutableEvent implements PlayerEvent 
      * This event is fired in {@link ItemStack#getTooltipLines(Item.TooltipContext, Player, TooltipFlag)}, which in turn is called from its respective GUIContainer.
      * Tooltips are also gathered with a null player during startup by {@link Minecraft#createSearchTrees()}.
      */
+    @ApiStatus.Internal
     public ItemTooltipEvent(@NotNull ItemStack itemStack, @Nullable Player player, List<Component> list, TooltipFlag flags, Item.TooltipContext context, TooltipDisplay display)
     {
         this.player = player;
