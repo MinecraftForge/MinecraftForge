@@ -23,7 +23,7 @@ import net.minecraftforge.eventbus.api.Cancelable;
  * <br>
  * This event is fired on {@link MinecraftForge#EVENT_BUS}
  */
-public class LivingBreatheEvent extends LivingEvent {
+public final class LivingBreatheEvent extends LivingEvent {
     private boolean canBreathe;
     private boolean canRefillAir;
     private int consumeAirAmount;

@@ -24,7 +24,7 @@ import org.jetbrains.annotations.ApiStatus;
  * @see RenderPlayerEvent.Post
  * @see PlayerRenderer
  */
-public abstract class RenderPlayerEvent extends PlayerEvent
+public abstract sealed class RenderPlayerEvent extends PlayerEvent
 {
     private final PlayerRenderer renderer;
     private final float partialTick;
@@ -97,7 +97,7 @@ public abstract class RenderPlayerEvent extends PlayerEvent
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     @Cancelable
-    public static class Pre extends RenderPlayerEvent
+    public static final class Pre extends RenderPlayerEvent
     {
         @ApiStatus.Internal
         public Pre(Player player, PlayerRenderer renderer, float partialTick, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight)
@@ -114,7 +114,7 @@ public abstract class RenderPlayerEvent extends PlayerEvent
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class Post extends RenderPlayerEvent
+    public static final class Post extends RenderPlayerEvent
     {
         @ApiStatus.Internal
         public Post(Player player, PlayerRenderer renderer, float partialTick, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight)

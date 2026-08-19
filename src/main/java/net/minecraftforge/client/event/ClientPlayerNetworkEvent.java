@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
  * @see LoggingOut
  * @see Clone
  **/
-public abstract class ClientPlayerNetworkEvent extends Event
+public abstract sealed class ClientPlayerNetworkEvent extends Event
 {
     private final MultiPlayerGameMode multiPlayerGameMode;
     private final LocalPlayer player;
@@ -72,7 +72,7 @@ public abstract class ClientPlayerNetworkEvent extends Event
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class LoggingIn extends ClientPlayerNetworkEvent
+    public static final class LoggingIn extends ClientPlayerNetworkEvent
     {
         @ApiStatus.Internal
         public LoggingIn(final MultiPlayerGameMode controller, final LocalPlayer player, final Connection networkManager)
@@ -91,7 +91,7 @@ public abstract class ClientPlayerNetworkEvent extends Event
      */
     @SuppressWarnings("NullableProblems")
     // Shush IntelliJ, we override non-nullables as nullables in this specific event; see later comment
-    public static class LoggingOut extends ClientPlayerNetworkEvent
+    public static final class LoggingOut extends ClientPlayerNetworkEvent
     {
         @ApiStatus.Internal
         public LoggingOut(@Nullable final MultiPlayerGameMode controller, @Nullable final LocalPlayer player, @Nullable final Connection networkManager)
@@ -145,7 +145,7 @@ public abstract class ClientPlayerNetworkEvent extends Event
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class Clone extends ClientPlayerNetworkEvent
+    public static final class Clone extends ClientPlayerNetworkEvent
     {
         private final LocalPlayer oldPlayer;
 

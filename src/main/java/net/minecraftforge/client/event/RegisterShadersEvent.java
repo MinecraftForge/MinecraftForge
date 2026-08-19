@@ -28,7 +28,7 @@ import java.util.function.Consumer;
  * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
  * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  */
-public class RegisterShadersEvent extends Event implements IModBusEvent
+public final class RegisterShadersEvent extends Event implements IModBusEvent
 {
     private final ResourceProvider resourceProvider;
     private final List<Pair<ShaderInstance, Consumer<ShaderInstance>>> shaderList;
