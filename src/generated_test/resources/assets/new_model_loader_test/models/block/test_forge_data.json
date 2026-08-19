@@ -1,0 +1,68 @@
+{
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "forge_data": {
+            "block_light": 10,
+            "sky_light": 10
+          },
+          "texture": "#all"
+        },
+        "east": {
+          "forge_data": {
+            "block_light": 10,
+            "sky_light": 10
+          },
+          "texture": "#all"
+        },
+        "north": {
+          "forge_data": {
+            "block_light": 10,
+            "sky_light": 10
+          },
+          "texture": "#all"
+        },
+        "south": {
+          "forge_data": {
+            "block_light": 10,
+            "sky_light": 10
+          },
+          "texture": "#all"
+        },
+        "up": {
+          "forge_data": {
+            "block_light": 10,
+            "sky_light": 10
+          },
+          "texture": "#all"
+        },
+        "west": {
+          "forge_data": {
+            "block_light": 10,
+            "sky_light": 10
+          },
+          "texture": "#all"
+        }
+      },
+      "forge_data": {
+        "block_light": 15,
+        "sky_light": 15
+      },
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ]
+    }
+  ],
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "all": "minecraft:block/diamond_ore"
+  }
+}

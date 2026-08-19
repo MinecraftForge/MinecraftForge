@@ -10,6 +10,7 @@
   },
   "loader": "forge:item_layers",
   "render_types": {},
+  "render_types_fast": {},
   "textures": {
     "layer0": "minecraft:item/coal",
     "layer1": "minecraft:item/stick",
