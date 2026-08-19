@@ -9,6 +9,7 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.fml.loading.progress.ProgressMeter;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -39,7 +40,10 @@ public record ModLoadingState(String name, String previous,
                                                       final ProgressMeter progressBar,
                                                       final Function<Executor, CompletableFuture<Void>> preSyncTask,
                                                       final Function<Executor, CompletableFuture<Void>> postSyncTask) {
-        return transition.map(t -> t.build(name, syncExecutor, parallelExecutor, progressBar, preSyncTask, postSyncTask));
+        var transition = this.transition().orElse(null);
+        return transition == null
+                ? Optional.empty()
+                : Optional.ofNullable(transition.build(name, syncExecutor, parallelExecutor, progressBar, preSyncTask, postSyncTask));
     }
 
     /**
@@ -51,7 +55,7 @@ public record ModLoadingState(String name, String previous,
      * @param phase    the mod loading phase the state belongs to
      */
     public static ModLoadingState empty(final String name, final String previous, final ModLoadingPhase phase) {
-        return new ModLoadingState(name, previous, ml -> "", f->0, phase, Optional.empty(), Optional.empty());
+        return new ModLoadingState(name, previous, ml -> "", f -> 0, phase, Optional.empty(), Optional.empty());
     }
 
     /**
@@ -97,6 +101,22 @@ public record ModLoadingState(String name, String previous,
      */
     public static ModLoadingState withInline(final String name, final String previous, final ModLoadingPhase phase,
                                              final Consumer<ModList> inline) {
-        return new ModLoadingState(name, previous, ml -> "Processing work " + name, ml->0, phase, Optional.of(inline), Optional.empty());
+        return new ModLoadingState(name, previous, ml -> "Processing work " + name, ml -> 0, phase, Optional.of(inline), Optional.empty());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof ModLoadingState that
+                && this.phase == that.phase
+                && this.name.equals(that.name)
+                && Objects.equals(this.previous, that.previous);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = phase.hashCode();
+        result = 31 * result + name.hashCode();
+        result = 31 * result + Objects.hashCode(previous);
+        return result;
     }
 }
