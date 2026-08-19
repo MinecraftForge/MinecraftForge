@@ -247,6 +247,12 @@ public class NewModelLoaderTest
                             .with(BlockStateProperties.HORIZONTAL_FACING, Direction.SOUTH)
                             .addModels(new ConfiguredModel(model, 0, 180, false))
                     .partialState();
+            models().getBuilder("test_forge_data")
+                    .texture("all", mcLoc("block/diamond_ore"))
+                    .element().from(0.0F, 0.0F, 0.0F).to(16.0F, 16.0F, 16.0F)
+                    .allFaces((dir, face) -> face.texture("#all").emissivity(10, 10))
+                    .emissivity(15, 15).end()
+                    .renderType("cutout");
         }
     }
 }
