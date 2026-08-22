@@ -25,7 +25,7 @@
              return strippedBlock;
          } else {
 -            Optional<BlockState> scrapedBlock = WeatheringCopper.getPrevious(oldState);
-+            var scrape = ctx == null ? null : oldState.getToolModifiedState(ctx, net.minecraftforge.common.ToolActions.AXE_STRIP, false);
++            var scrape = ctx == null ? null : oldState.getToolModifiedState(ctx, net.minecraftforge.common.ToolActions.AXE_SCRAPE, false);
 +            Optional<BlockState> scrapedBlock = scrape != null ? Optional.of(scrape) : WeatheringCopper.getPrevious(oldState);
              if (scrapedBlock.isPresent()) {
                  spawnSoundAndParticle(level, pos, player, oldState, SoundEvents.AXE_SCRAPE, 3005);
