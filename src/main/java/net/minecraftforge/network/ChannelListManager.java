@@ -83,7 +83,7 @@ public class ChannelListManager {
     }
 
     public static void addChannels(Connection connection) {
-        addChannels(connection, NetworkRegistry.buildRegisterList());
+        addChannels(connection, NetworkRegistry.getRegisterList());
     }
 
     public static void addChannels(Connection connection, Identifier... channels) {
@@ -120,7 +120,7 @@ public class ChannelListManager {
 
     private static void encode(FriendlyByteBuf buf, List<String> channels) {
         for (var c : channels) {
-            buf.writeBytes(c.toString().getBytes(StandardCharsets.UTF_8));
+            buf.writeBytes(c.getBytes(StandardCharsets.UTF_8));
             buf.writeByte(0);
         }
     }
