@@ -302,6 +302,7 @@ modId="alter_ground_event_test"
 modId="custom_fluid_container_test"
 [[mods]]
     modId="keymapping_test"
-
+[[mods]]
+modId="living_swap_items_event_test"
 
 # ADD ABOVE THIS LINE
