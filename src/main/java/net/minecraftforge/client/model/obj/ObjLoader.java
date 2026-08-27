@@ -57,6 +57,7 @@ public class ObjLoader implements IGeometryLoader<ObjModel>, ResourceManagerRelo
         boolean flipV = GsonHelper.getAsBoolean(jsonObject, "flip_v", false);
         boolean emissiveAmbient = GsonHelper.getAsBoolean(jsonObject, "emissive_ambient", true);
         String mtlOverride = GsonHelper.getAsString(jsonObject, "mtl_override", null);
+        boolean allowHomonymObjectName = GsonHelper.getAsBoolean(jsonObject,"allow_homonym_object_name",false);
 
         // TODO: Deprecated names. To be removed in 1.20
         var deprecationWarningsBuilder = ImmutableMap.<String, String>builder();
@@ -86,7 +87,7 @@ public class ObjLoader implements IGeometryLoader<ObjModel>, ResourceManagerRelo
             deprecationWarningsBuilder.put("materialLibraryOverride", "mtl_override");
         }
 
-        return loadModel(new ObjModel.ModelSettings(new ResourceLocation(modelLocation), automaticCulling, shadeQuads, flipV, emissiveAmbient, mtlOverride), deprecationWarningsBuilder.build());
+        return loadModel(new ObjModel.ModelSettings(new ResourceLocation(modelLocation), automaticCulling, shadeQuads, flipV, emissiveAmbient, mtlOverride,allowHomonymObjectName), deprecationWarningsBuilder.build());
     }
 
     public ObjModel loadModel(ObjModel.ModelSettings settings)
