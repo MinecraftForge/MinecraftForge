@@ -1,0 +1,19 @@
+plugins {
+    id 'net.minecraftforge.forge.build.convention'
+}
+
+gradleutils.displayName = 'Forge-Examiner'
+description = 'Forge Mod Locator for multiple mods merged together into one code source'
+
+dependencies {
+    implementation project(':fmlloader')
+    implementation(libs.jimfs){ transitive = false }
+    implementation(libs.bootstrap.api)
+}
+
+convention.manifest('net/minecraftforge/examiner/', [
+    'Automatic-Module-Name': 'net.minecraftforge.examiner',
+    'Forge-Module-Layer'   : 'boot'
+])
+
+convention.publish()

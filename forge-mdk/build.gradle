@@ -1,0 +1,68 @@
+plugins {
+    id 'net.minecraftforge.forge.build.convention'
+}
+
+gradleutils.displayName = 'Forge-Tests'
+description = 'Mods used for testing Forge features'
+
+license {
+    exclude 'com/example/'
+}
+
+convention.basicRuns('mdk_datagen', file('src/main/generated')) {
+    flat = true
+}
+
+final mdkGradleWrapper = tasks.register('mdkGradleWrapper', Wrapper) {
+    gradleVersion = libs.versions.gradle.get()
+    scriptFile = layout.buildDirectory.dir("wrapper/" + gradleVersion + "/gradlew")
+    jarFile = layout.buildDirectory.dir("wrapper/" + gradleVersion + "/gradle/wrapper/gradle-wrapper.jar")
+}
+
+final mdkZip = tasks.register('mdkZip', Zip) {
+    dependsOn mdkGradleWrapper
+
+    archiveBaseName = project.name
+    archiveClassifier = 'mdk'
+    archiveVersion = project.version
+    destinationDirectory = file('build/libs')
+
+    from(rootProject.file('LICENSE.txt'))
+    from(changelog.task.flatMap(task -> task.outputFile))
+
+    from mdkGradleWrapper.map(Wrapper.&getScriptFile)
+    from mdkGradleWrapper.map(Wrapper.&getBatchScript)
+
+    into('gradle/wrapper/') {
+        from mdkGradleWrapper.map(Wrapper.&getJarFile)
+        from mdkGradleWrapper.map(Wrapper.&getPropertiesFile)
+    }
+    from(file('template/')){
+        file('template/gitignore.txt').eachLine {
+            if (!it.trim().isEmpty() && !it.trim().startsWith('#'))
+                exclude it
+        }
+
+        filter(org.apache.tools.ant.filters.ReplaceTokens, tokens: [
+            FORGE_VERSION: versions.forge,
+            FORGE_GROUP: project.group,
+            FORGE_NAME: project.name,
+            MC_VERSION: versions.minecraft,
+            FORGE_SPEC_VERSION: versions.forgeSpec,
+            MC_NEXT_VERSION: versions.minecraftNext,
+            EVENTBUS_VERSION: libs.versions.eventbus.get()
+        ])
+
+        rename 'gitignore\\.txt', '.gitignore'
+        rename 'gitattributes\\.txt', '.gitattributes'
+    }
+    from(rootProject.file('src/main/java/com/example/examplemod/')) {
+        into('src/main/java/com/example/examplemod/')
+    }
+    from(rootProject.file('src/main/generated/')) {
+        into('src/main/resources/')
+        exclude '**/.cache/'
+    }
+}
+
+forgedev.provideFile('mdkZip', mdkZip.flatMap { it.archiveFile } )

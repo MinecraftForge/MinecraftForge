@@ -1,0 +1,13 @@
+modLoader="javafml"
+loaderVersion="[0,)"
+license="LGPL_v2"
+
+[[mods]]
+modId="examplemod"
+version="1.0.0"
+displayName="Example Mod DataGen"
+description="Example Mod DataGen"
+
+[[mods]]
+modId="mdk_datagen"
+version="1.0.0"

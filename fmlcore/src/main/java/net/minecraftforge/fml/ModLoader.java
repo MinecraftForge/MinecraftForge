@@ -366,6 +366,10 @@ public final class ModLoader {
             mod.acceptEvent(e);
     }
 
+    public static <T extends IModBusEvent> void postEvent(ModContainer mod, T e) {
+        mod.acceptEvent(e);
+    }
+
     public static <T extends IModBusEvent> T postEventWithReturn(T e) {
         if (!loadingStateValid) {
             LOGGER.error("Cowardly refusing to send event {} to a broken mod state", e.getClass().getName());

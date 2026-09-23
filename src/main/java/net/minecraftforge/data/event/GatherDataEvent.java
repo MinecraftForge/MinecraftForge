@@ -94,8 +94,13 @@ public final class GatherDataEvent implements IModBusEvent {
             return flat || getMods().size() == 1;
         }
 
+        @Deprecated(forRemoval = true, since = "26.3")
         public DataGenerator makeGenerator(final Function<Path,Path> pathEnhancer, final boolean shouldExecute) {
-            final DataGenerator generator = new DataGenerator.Cached(pathEnhancer.apply(path), DetectedVersion.tryDetectVersion(), shouldExecute);
+            return makeGenerator(pathEnhancer.apply(path), shouldExecute);
+        }
+
+        public DataGenerator makeGenerator(final Path path, final boolean shouldExecute) {
+            final DataGenerator generator = new DataGenerator.Cached(path, DetectedVersion.tryDetectVersion(), shouldExecute);
             if (shouldExecute)
                 generators.add(generator);
             return generator;

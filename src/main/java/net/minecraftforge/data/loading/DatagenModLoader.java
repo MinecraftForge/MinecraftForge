@@ -10,18 +10,27 @@ import net.minecraft.client.ClientBootstrap;
 import net.minecraft.data.registries.VanillaRegistries;
 import net.minecraft.server.Bootstrap;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.ModWorkManager;
 import net.minecraftforge.data.event.GatherDataEvent;
+import net.minecraftforge.data.event.GatherDataEvent.DataGeneratorConfig;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 import java.util.regex.Pattern;
 
@@ -117,15 +126,76 @@ public final class DatagenModLoader {
         }
 
         existingFileHelper = new ExistingFileHelper(existingPacks, existingMods, assetIndex, assetsDir);
-        ModLoader.runEventGenerator(mc -> new GatherDataEvent(
-            mc,
-            config.makeGenerator(
-                p -> config.isFlat() ? p : p.resolve(mc.getModId()),
-                config.getMods().contains(mc.getModId())
-            ), config, existingFileHelper)
-        );
-        config.runAll();
+
+        if (ModLoader.isLoadingStateValid()) {
+            var projectPaths = loadProjectPaths();
+
+            for (var mod : ModList.getLoadedMods()) {
+                var projectInfo = loadProjectInfo(mod);
+                var modOutput = projectPaths.isEmpty() || projectInfo.isEmpty()
+                    ? simpleOutput(output, config, mod)
+                    : findOutput(projectPaths, projectInfo, output, config, mod);
+
+                var gen = config.makeGenerator(modOutput, config.getMods().contains(mod.getModId()));
+                var event = new GatherDataEvent(mod, gen, config, existingFileHelper);
+                ModLoader.postEvent(mod, event);
+            }
+
+            config.runAll();
+        } else {
+            LOGGER.error("Cowardly refusing to send event generator to a broken mod state");
+        }
 
         return false;
+    }
+
+    private static Map<String, String> loadProjectPaths() {
+        var projectList = System.getProperty("forge.project.list");
+        return projectList == null ? Map.of() : loadProps(Path.of(projectList));
+    }
+
+    private static Map<String, String> loadProjectInfo(ModContainer mod) {
+        return loadProps(mod.getModInfo().getOwningFile().getFile().findResource(".project_info.properties"));
+    }
+
+    private static Map<String, String> loadProps(Path target) {
+        if (!Files.exists(target))
+            return Map.of();
+
+        try (var input = Files.newInputStream(target)) {
+            var reader = new InputStreamReader(input, StandardCharsets.UTF_8);
+            var props = new Properties();
+            props.load(reader);
+
+            @SuppressWarnings({ "rawtypes", "unchecked" })
+            var ret = (Map<String, String>)(Map)props;
+            return ret;
+        } catch (IOException e) {
+            LOGGER.error("Failed to read project list file {}", target, e);
+        }
+        return Map.of();
+    }
+
+    private static Path simpleOutput(Path base, DataGeneratorConfig config, ModContainer mod) {
+        return config.isFlat() ? base : base.resolve(mod.getModId());
+    }
+
+    private static Path findOutput(Map<String, String> projects, Map<String, String> info, Path original, DataGeneratorConfig config, ModContainer mod) {
+        var name = info.get("name");
+        var base = projects.get(name);
+        var output = info.get("output");
+
+        // We need to find both the base and the mod specific info
+        if (base == null || output == null)
+            return simpleOutput(original, config, mod);
+
+        // If we can't find the output, then we're probably not in the workspace for this mod.
+        var target = Path.of(base).resolve(output);
+        if (!Files.exists(target))
+            return simpleOutput(original, config, mod);
+
+        if ("true".equals(info.get("flat")))
+            return target;
+        return target.resolve(mod.getModId());
     }
 }

@@ -23,6 +23,7 @@ night-config = "3.7.4"
 jarjar       = "0.4.2"
 log4j        = "2.26.0"
 lwjgl        = "3.4.3"
+gradle       = "9.7.1" # Gradle we bundle with the MDK
 
 [libraries]
 # TODO [Forge][Buildscript We should not be needing to manually add transitive dependencies
