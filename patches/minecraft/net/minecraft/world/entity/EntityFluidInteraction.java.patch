@@ -105,7 +105,7 @@
      private EntityFluidInteraction.@Nullable CurrentAccumulator getCurrentAccumulatorFor(final Holder<Fluid> fluid) {
          for (Entry<TagKey<Fluid>, EntityFluidInteraction.CurrentAccumulator> entry : Reference2ObjectMaps.fastIterable(this.currentAccumulators)) {
              if (fluid.is(entry.getKey())) {
-@@ -158,6 +_,30 @@
+@@ -158,6 +_,28 @@
          return null;
      }
  
@@ -113,9 +113,7 @@
 +        var ret = this.currentAccumulatorsByType.get(fluid);
 +        if (ret == null) {
 +            var factory = MODDED_TYPES.get(fluid);
-+            if (factory == null)
-+                return null;
-+            ret = factory.get();
++            ret = factory == null ? new CurrentAccumulator() : factory.get();
 +            this.currentAccumulatorsByType.put(fluid, ret);
 +        }
 +        return ret;
