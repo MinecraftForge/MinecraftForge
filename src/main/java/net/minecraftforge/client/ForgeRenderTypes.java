@@ -243,6 +243,7 @@ public enum ForgeRenderTypes {
             return RenderType.create(
                 "forge_text",
                 RenderSetup.builder(RenderPipelines.TEXT)
+                    .setOitPipelines(RenderPipelines.OIT_TEXT)
                     .withTexture("Sampler0", texture)
                     .useLightmap()
                     .sortOnUpload() // This is what is different from RenderTypes.TEXT
@@ -254,6 +255,7 @@ public enum ForgeRenderTypes {
         private static RenderType getTextGrayscale(Identifier texture) {
             return RenderType.create("forge_text_grayscale",
                 RenderSetup.builder(RenderPipelines.TEXT_GRAYSCALE)
+                    .setOitPipelines(RenderPipelines.OIT_TEXT_GRAYSCALE)
                     .withTexture("Sampler0", texture)
                     .useLightmap()
                     .useOverlay()
@@ -265,6 +267,7 @@ public enum ForgeRenderTypes {
         private static RenderType getTextPolygonOffset(Identifier texture) {
             return RenderType.create("forge_text_polygon_offset",
                 RenderSetup.builder(RenderPipelines.TEXT_POLYGON_OFFSET)
+                    .setOitPipelines(RenderPipelines.OIT_TEXT_POLYGON_OFFSET)
                     .sortOnUpload()
                     .withTexture("Sampler0", texture)
                     .useLightmap()
@@ -276,6 +279,7 @@ public enum ForgeRenderTypes {
         private static RenderType getTextGrayscalePolygonOffset(Identifier texture) {
             return RenderType.create("forge_text_grayscale_polygon_offset",
                 RenderSetup.builder(RenderPipelines.TEXT_GRAYSCALE)
+                    .setOitPipelines(RenderPipelines.OIT_TEXT_GRAYSCALE_POLYGON_OFFSET)
                     .sortOnUpload()
                     .withTexture("Sampler0", texture)
                     .useLightmap()
