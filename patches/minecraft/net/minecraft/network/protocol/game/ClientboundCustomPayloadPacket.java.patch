@@ -44,12 +44,20 @@
     }
  
     public ResourceLocation m_132042_() {
-@@ -61,4 +_,8 @@
+@@ -60,5 +_,16 @@
+ 
     public FriendlyByteBuf m_132045_() {
        return new FriendlyByteBuf(this.f_132030_.copy());
-    }
++   }
 +
 +   @Override public int getIndex() { return Integer.MAX_VALUE; }
 +   @Override public ResourceLocation getName() { return m_132042_(); }
-+   @Override public FriendlyByteBuf getInternalData() { return m_132045_(); }
++   @Override public FriendlyByteBuf getInternalData() {
++       // Create a heap copy to pass off to other consumers because we could be reading from a pooled buffer that never gets released.
++       // Using a heap buffer means that it will be released when the GC determines its free.
++       // See: https://github.com/MinecraftForge/MinecraftForge/issues/10861
++       var heapCopy = io.netty.buffer.Unpooled.buffer(this.f_132030_.readableBytes());
++       heapCopy.writeBytes(this.f_132030_.slice()); // We use a slice to not mess with the reader index, just in case someone else wants to touch the buffer later
++       return new FriendlyByteBuf(heapCopy);
+    }
  }
