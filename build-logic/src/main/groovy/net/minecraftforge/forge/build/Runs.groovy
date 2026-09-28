@@ -41,10 +41,10 @@ class Runs implements Meta {
                 dependencies.with {
                     add('implementation', it.project(':')) // Root project is forge itself
                 }
-                if (output != null)
-                    sourceSet.resources.with { srcDir 'src/main/generated' }
                 hasDependency = true
             }
+            if (output != null)
+                sourceSet.resources.with { srcDir output }
 
             forgedev.runs.with {
                 final File existing = sourceSet.getResources().getSrcDirs()[0]
@@ -62,6 +62,9 @@ class Runs implements Meta {
 
                         if (runName.contains('client') || runName.contains('data')) {
                             options.with {
+                                // LWJGL needs native access, Mojang gets away with just saying 'ALL-UNNAMED' because it doesnt boot into module land
+                                // We need a system to translate that to module names
+                                //jvmArgs '--enable-native-access=ALL-UNNAMED', '--add-exports', 'java.base/jdk.internal.misc=ALL-UNNAMED'
                                 args '--assetsDir', '{assets_root}', '--assetIndex', '{asset_index}'
                                 systemProperty 'org.lwjgl.system.SharedLibraryExtractDirectory', 'lwjgl_dll'
                             }
@@ -81,6 +84,8 @@ class Runs implements Meta {
                             args '--gameDir', '.'
                             jvmArgs '-Djava.net.preferIPv6Addresses=system', '-XX:+UseCompactObjectHeaders', '-XX:StackShadowPages=32'
 
+                            //systemProperty 'forge.logging.marker.registries', 'ACCEPT'
+                            //systemProperty 'forge.logging.console.level', 'debug'
                             systemProperty 'bsl.debug', 'true'
                             systemProperty 'terminal.jline', 'true'
                             systemProperty 'forge.enableGameTest', 'true'
