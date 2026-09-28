@@ -9,7 +9,6 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ExternalModuleDependencyBundle
 import org.gradle.api.artifacts.MinimalExternalModuleDependency
 import org.gradle.api.model.ObjectFactory
@@ -18,7 +17,6 @@ import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
-import org.jspecify.annotations.Nullable
 
 import javax.inject.Inject
 
@@ -98,15 +96,36 @@ abstract class ConventionExtension implements Meta {
         return getGenAllData()
     }
 
-    void basicRuns() {
-        this.runs.apply(null, null)
+    Runs getRuns() {
+        return this.runs
     }
-
-    void basicRuns(String mods, File output) {
-        this.runs.apply(mods, output)
+    Runs runs(Action<Runs> config) {
+        config.execute(this.runs)
+        return this.runs
     }
-    void testRuns(String mods, File output) {
-        this.runs.applyTest(mods, output)
+    Runs basicRuns() {
+        return basicRuns({})
+    }
+    Runs basicRuns(Action<Runs> config) {
+        this.runs.main(null, null)
+        config.execute(this.runs)
+        return getRuns()
+    }
+    Runs basicRuns(String mods, File output) {
+        return basicRuns(mods, output, {})
+    }
+    Runs basicRuns(String mods, File output, Action<Runs> config) {
+        this.runs.main(mods, output)
+        config.execute(this.runs)
+        return getRuns()
+    }
+    Runs testRuns(String mods, File output) {
+        return testRuns(mods, output, {})
+    }
+    Runs testRuns(String mods, File output, Action<Runs> config) {
+        this.runs.test(mods, output)
+        config.execute(this.runs)
+        return getRuns()
     }
     // endregion
 

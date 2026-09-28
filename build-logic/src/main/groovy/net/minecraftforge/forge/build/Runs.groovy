@@ -6,11 +6,15 @@
 package net.minecraftforge.forge.build
 
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.tasks.SourceSet
+import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.tasks.WriteProperties
 import org.jspecify.annotations.Nullable
 
 import javax.inject.Inject
+import javax.naming.spi.ObjectFactory
 
 @CompileStatic
 class Runs implements Meta {
@@ -27,18 +31,20 @@ class Runs implements Meta {
         this.ext.project
     }
 
-    void apply(@Nullable String mods, @Nullable File output) {
+    void main(@Nullable String mods, @Nullable File output) {
         final project = this.project
         final genAllData = this.ext.genAllData
 
         project.with {
+            final SourceSet sourceSet = getJava().getSourceSets().named("main").get()
             if (!hasDependency && project != project.rootProject) {
                 dependencies.with {
                     add('implementation', it.project(':')) // Root project is forge itself
                 }
                 hasDependency = true
             }
-            final SourceSet sourceSet = getJava().getSourceSets().named("main").get()
+            if (output != null)
+                sourceSet.resources.with { srcDir output }
 
             forgedev.runs.with {
                 final File existing = sourceSet.getResources().getSrcDirs()[0]
@@ -56,6 +62,9 @@ class Runs implements Meta {
 
                         if (runName.contains('client') || runName.contains('data')) {
                             options.with {
+                                // LWJGL needs native access, Mojang gets away with just saying 'ALL-UNNAMED' because it doesnt boot into module land
+                                // We need a system to translate that to module names
+                                //jvmArgs '--enable-native-access=ALL-UNNAMED', '--add-exports', 'java.base/jdk.internal.misc=ALL-UNNAMED'
                                 args '--assetsDir', '{assets_root}', '--assetIndex', '{asset_index}'
                                 systemProperty 'org.lwjgl.system.SharedLibraryExtractDirectory', 'lwjgl_dll'
                             }
@@ -63,6 +72,7 @@ class Runs implements Meta {
 
                         if (runName.contains('data')) {
                             options.with(sourceSet).with {
+                                systemProperties.put("forge.project.list", getProjectList().flatMap { it.destinationFile.map{ it.asFile.absolutePath } })
                                 if (mods != null)   args('--mod', mods)
                                 if (output != null) args('--output', output)
                             }
@@ -74,6 +84,8 @@ class Runs implements Meta {
                             args '--gameDir', '.'
                             jvmArgs '-Djava.net.preferIPv6Addresses=system', '-XX:+UseCompactObjectHeaders', '-XX:StackShadowPages=32'
 
+                            //systemProperty 'forge.logging.marker.registries', 'ACCEPT'
+                            //systemProperty 'forge.logging.console.level', 'debug'
                             systemProperty 'bsl.debug', 'true'
                             systemProperty 'terminal.jline', 'true'
                             systemProperty 'forge.enableGameTest', 'true'
@@ -128,8 +140,7 @@ class Runs implements Meta {
         }
     }
 
-
-    void applyTest(@Nullable String mods, @Nullable File output) {
+    void test(@Nullable String mods, @Nullable File output) {
         final project = this.project
         final genAllData = this.ext.genAllData
 
@@ -159,5 +170,46 @@ class Runs implements Meta {
                 it.dependsOn forgedev.runs.getByName('data').with(sourceSet).run, forgedev.runs.getByName('clientData').with(sourceSet).run
             }
         }
+    }
+
+    private TaskProvider<WriteProperties> projectInfo = null
+    TaskProvider<WriteProperties> getProjectInfo() {
+        if (projectInfo == null) {
+            projectInfo = this.project.tasks.register("writeProjectInfo", WriteProperties)
+            projectInfo.configure {
+                it.destinationFile.set(this.project.file('src/main/resources/.project_info.properties'))
+                it.property('name', this.project.rootProject.name + this.project.isolated.path.replaceAll(':', '.'))
+                it.property('output', 'src/main/generated')
+            }
+            this.project.tasks.named("generateResources").configure { it.dependsOn(projectInfo) }
+        }
+        return projectInfo
+    }
+    TaskProvider<WriteProperties> projectInfo(Action<? extends WriteProperties> action) {
+        getProjectInfo().configure(action)
+        return getProjectInfo()
+    }
+    void setFlat(boolean value) {
+        projectInfo(task -> task.property('flat', value))
+    }
+
+    private TaskProvider<WriteProperties> projectList = null
+    TaskProvider<WriteProperties> getProjectList() {
+        if (projectList == null) {
+            projectList = this.project.tasks.register("writeProjectList", WriteProperties)
+            projectList.configure { task ->
+                task.destinationFile.set(this.project.layout.buildDirectory.file('project_list.properties'))
+                task.encoding = 'UTF-8'
+                final root = this.project.rootProject.name
+                this.project.rootProject.allprojects.forEach { p ->
+                    task.property(root + p.isolated.path.replaceAll(':', '.'), p.isolated.projectDirectory.asFile.absolutePath)
+                }
+            }
+        }
+        return projectList
+    }
+    TaskProvider<WriteProperties> projectList(Action<? extends WriteProperties> action) {
+        getProjectList().configure(action)
+        return getProjectList()
     }
 }

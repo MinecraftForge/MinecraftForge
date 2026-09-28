@@ -102,11 +102,12 @@ public class ResourcePackLoader {
 
             if (pack == null) {
                 // Vanilla only logs an error, instead of propagating, so handle null and warn that something went wrong
+                LOGGER.warn(Logging.CORE, "Could not find resource pack for mod file {}", file.getFileName());
                 ModLoader.addWarning(new ModLoadingWarning(modinfo, ModLoadingStage.ERROR, "fml.modloading.brokenresources", file));
                 continue;
             }
 
-            LOGGER.debug(Logging.CORE, "Generating PackInfo named {} for mod file {}", name, file.getFilePath());
+            LOGGER.debug(Logging.CORE, "Generating PackInfo named {} for mod file {}", name, file.getFileName());
             if (!client || mod.showAsResourcePack())
                 packAcceptor.accept(pack);
             else

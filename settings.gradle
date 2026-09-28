@@ -24,6 +24,9 @@ include 'javafmllanguage'
 include 'lowcodelanguage'
 include 'fmlearlydisplay'
 include 'forge-transformers'
+include 'forge-examiner'
+include 'forge-tests'
+include 'forge-mdk'
 
 enableFeaturePreview 'TYPESAFE_PROJECT_ACCESSORS'
 

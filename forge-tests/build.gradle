@@ -1,0 +1,25 @@
+plugins {
+    id 'net.minecraftforge.forge.build.convention'
+}
+
+gradleutils.displayName = 'Forge-Tests'
+description = 'Mods used for testing Forge features'
+
+license {
+    exclude 'com/example/'
+}
+
+convention.manifest('net/minecraftforge/forge/test/', [
+    'Automatic-Module-Name': 'net.minecraftforge.forge.test'
+])
+convention.manifest('net/minecraftforge/forge/debug/')
+
+convention.publish()
+
+convention.basicRuns('.+', file('src/main/generated')) {
+    flat = false
+}
+
+dependencies {
+    api project(':forge-examiner')
+}

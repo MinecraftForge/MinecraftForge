@@ -31,7 +31,6 @@ dependencies {
     implementation(libs.securemodules          ){ transitive = false }
     implementation(libs.accesstransformers     ){ transitive = false }
     implementation(libs.terminalconsoleappender){ transitive = false }
-    implementation(libs.jimfs                  ){ transitive = false }
     implementation(libs.roimfs                 ){ transitive = false }
 
     // Needed because we have a custom log4j plugin, and they removed package scanning and require a data file to be generated
