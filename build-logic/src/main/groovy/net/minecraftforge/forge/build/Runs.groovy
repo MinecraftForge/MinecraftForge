@@ -6,6 +6,8 @@
 package net.minecraftforge.forge.build
 
 import groovy.transform.CompileStatic
+import net.minecraftforge.licenser.LicenseExtension
+import net.minecraftforge.licenser.tasks.LicenseCheck
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.tasks.SourceSet
@@ -182,6 +184,9 @@ class Runs implements Meta {
                 it.property('output', 'src/main/generated')
             }
             this.project.tasks.named("generateResources").configure { it.dependsOn(projectInfo) }
+            this.project.tasks.withType(LicenseCheck).configureEach {
+                it.dependsOn(projectInfo)
+            }
         }
         return projectInfo
     }

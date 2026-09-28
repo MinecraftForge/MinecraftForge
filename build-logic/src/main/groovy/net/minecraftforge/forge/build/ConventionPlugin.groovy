@@ -84,6 +84,7 @@ class ConventionPlugin implements Plugin<Project>, Meta {
 
             license.with {
                 header = rootProject.file('LICENSE-header.txt')
+                exclude('.project_info.properties')
             }
 
             // Common dependencies,
