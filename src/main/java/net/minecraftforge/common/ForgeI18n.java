@@ -95,6 +95,10 @@ public class ForgeI18n {
     }
 
     public static String parseFormat(final String format, final Object... args) {
+        // No format elements and no quotes: MessageFormat would return the pattern unchanged, so skip parsing it
+        if (format != null && format.indexOf('{') < 0 && format.indexOf('\'') < 0) {
+            return format;
+        }
         final ExtendedMessageFormat extendedMessageFormat = new ExtendedMessageFormat(format, customFactories);
         return extendedMessageFormat.format(args);
     }
