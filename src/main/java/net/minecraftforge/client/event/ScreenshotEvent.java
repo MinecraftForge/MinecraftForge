@@ -30,7 +30,7 @@ import java.io.IOException;
  * @see Screenshot
  */
 @Cancelable
-public class ScreenshotEvent extends Event
+public final class ScreenshotEvent extends Event
 {
     public static final Component DEFAULT_CANCEL_REASON = Component.literal("Screenshot canceled");
 

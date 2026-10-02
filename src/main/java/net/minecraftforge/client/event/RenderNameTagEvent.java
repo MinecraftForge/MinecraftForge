@@ -33,7 +33,7 @@ import org.jetbrains.annotations.ApiStatus;
  * @see EntityRenderer
  */
 @Event.HasResult
-public class RenderNameTagEvent extends EntityEvent
+public final class RenderNameTagEvent extends EntityEvent
 {
     private Component nameplateContent;
     private final Component originalContent;

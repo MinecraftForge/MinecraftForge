@@ -22,7 +22,7 @@ import org.jetbrains.annotations.ApiStatus;
  * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  **/
 @Cancelable
-public class ClientChatEvent extends Event
+public final class ClientChatEvent extends Event
 {
     private String message;
     private final String originalMessage;

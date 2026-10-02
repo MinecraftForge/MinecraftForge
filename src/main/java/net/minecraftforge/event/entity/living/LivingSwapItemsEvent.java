@@ -11,7 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.eventbus.api.Cancelable;
 import org.jetbrains.annotations.ApiStatus;
 
-public class LivingSwapItemsEvent extends LivingEvent
+public sealed class LivingSwapItemsEvent extends LivingEvent
 {
 
     @ApiStatus.Internal
@@ -27,7 +27,7 @@ public class LivingSwapItemsEvent extends LivingEvent
      * <p>This event is {@linkplain Cancelable cancellable}, and does not {@linkplain HasResult have a result}.
      */
     @Cancelable
-    public static class Hands extends LivingSwapItemsEvent
+    public static final class Hands extends LivingSwapItemsEvent
     {
         private ItemStack toMainHand;
         private ItemStack toOffHand;

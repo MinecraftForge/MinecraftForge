@@ -148,7 +148,7 @@ public class EntityTeleportEvent extends EntityEvent
      * If this event is canceled, the entity will not be teleported.
      */
     @Cancelable
-    public static class EnderPearl extends EntityTeleportEvent
+    public static final class EnderPearl extends EntityTeleportEvent
     {
         private final ServerPlayer player;
         private final ThrownEnderpearl pearlEntity;

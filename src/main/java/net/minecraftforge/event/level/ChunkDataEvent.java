@@ -60,7 +60,7 @@ public class ChunkDataEvent extends ChunkEvent
      **/
     public static class Load extends ChunkDataEvent
     {
-        private ChunkStatus.ChunkType status;
+        private final ChunkStatus.ChunkType status;
 
         public Load(ChunkAccess chunk, CompoundTag data, ChunkStatus.ChunkType status)
         {

@@ -34,7 +34,7 @@ import org.jetbrains.annotations.ApiStatus;
  *
  * @see net.minecraftforge.event.RegisterCommandsEvent
  */
-public class RegisterClientCommandsEvent extends Event
+public final class RegisterClientCommandsEvent extends Event
 {
     private final CommandDispatcher<CommandSourceStack> dispatcher;
     private final CommandBuildContext context;

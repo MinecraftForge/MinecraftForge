@@ -24,7 +24,7 @@ import org.jetbrains.annotations.ApiStatus;
  * This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus}
  * only on the {@linkplain net.minecraftforge.fml.LogicalSide#SERVER logical server}.
  */
-public class AlterGroundEvent extends Event {
+public final class AlterGroundEvent extends Event {
     private final LevelSimulatedReader level;
     private final RandomSource random;
     private final BlockPos pos;
