@@ -9,7 +9,6 @@ import com.mojang.logging.LogUtils;
 import cpw.mods.modlauncher.Launcher;
 import cpw.mods.modlauncher.api.IModuleLayerManager;
 import cpw.mods.modlauncher.util.ServiceLoaderUtils;
-import net.minecraftforge.fml.loading.progress.StartupNotificationManager;
 import net.minecraftforge.forgespi.language.IModLanguageProvider;
 import net.minecraftforge.fml.loading.moddiscovery.ExplodedDirectoryLocator;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
@@ -53,27 +52,7 @@ public class LanguageLoadingProvider
         return languageProviders.stream().map(function);
     }
 
-    private static class ModLanguageWrapper {
-        private final IModLanguageProvider modLanguageProvider;
-
-        private final ArtifactVersion version;
-        public ModLanguageWrapper(IModLanguageProvider modLanguageProvider, ArtifactVersion version)
-        {
-            this.modLanguageProvider = modLanguageProvider;
-            this.version = version;
-        }
-        public ArtifactVersion getVersion()
-        {
-            return version;
-        }
-
-        public IModLanguageProvider getModLanguageProvider()
-        {
-            return modLanguageProvider;
-        }
-
-
-    }
+    private record ModLanguageWrapper(IModLanguageProvider modLanguageProvider, ArtifactVersion version) {}
 
     LanguageLoadingProvider() {
         var sl = Launcher.INSTANCE.environment().findModuleLayerManager().flatMap(lm->lm.getLayer(IModuleLayerManager.Layer.PLUGIN)).orElseThrow();
@@ -81,7 +60,7 @@ public class LanguageLoadingProvider
         loadLanguageProviders();
     }
     private void loadLanguageProviders() {
-        LOGGER.debug(CORE, "Found {} language providers", ServiceLoaderUtils.streamServiceLoader(()->serviceLoader, sce->LOGGER.error("Problem with language loaders")).count());
+        LOGGER.debug(CORE, "Found {} language providers", ServiceLoaderUtils.streamWithErrorHandling(serviceLoader, sce -> LOGGER.error("Problem with language loaders")).count());
         serviceLoader.forEach(languageProviders::add);
         ImmediateWindowHandler.updateProgress("Loading language providers");
         languageProviders.forEach(lp -> {
@@ -140,11 +119,12 @@ public class LanguageLoadingProvider
             LOGGER.error(LOADING,"Missing language {} version {} wanted by {}", modLoader, modLoaderVersion, languageFileName);
             throw new EarlyLoadingException("Missing language "+modLoader, null, Collections.singletonList(new EarlyLoadingException.ExceptionData("fml.language.missingversion", modLoader, modLoaderVersion, languageFileName, "null")));
         }
-        if (!VersionSupportMatrix.testVersionSupportMatrix(modLoaderVersion, modLoader, "languageloader", (llid, range) -> range.containsVersion(mlw.getVersion()))) {
-            LOGGER.error(LOADING,"Missing language {} version {} wanted by {}, found {}", modLoader, modLoaderVersion, languageFileName, mlw.getVersion());
-            throw new EarlyLoadingException("Missing language "+ modLoader + " matching range "+modLoaderVersion + " found "+mlw.getVersion(), null, Collections.singletonList(new EarlyLoadingException.ExceptionData("fml.language.missingversion", modLoader, modLoaderVersion, languageFileName, mlw.getVersion())));
+
+        if (!VersionSupportMatrix.testVersionSupportMatrix(modLoaderVersion, modLoader, "languageloader", (llid, range) -> range.containsVersion(mlw.version()))) {
+            LOGGER.error(LOADING,"Missing language {} version {} wanted by {}, found {}", modLoader, modLoaderVersion, languageFileName, mlw.version());
+            throw new EarlyLoadingException("Missing language "+ modLoader + " matching range " + modLoaderVersion + " found " + mlw.version(), null, Collections.singletonList(new EarlyLoadingException.ExceptionData("fml.language.missingversion", modLoader, modLoaderVersion, languageFileName, mlw.version())));
         }
 
-        return mlw.getModLanguageProvider();
+        return mlw.modLanguageProvider();
     }
 }

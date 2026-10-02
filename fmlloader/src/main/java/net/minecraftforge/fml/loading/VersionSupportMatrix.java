@@ -5,36 +5,26 @@
 
 package net.minecraftforge.fml.loading;
 
-import net.minecraftforge.forgespi.language.MavenVersionAdapter;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.artifact.versioning.VersionRange;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiPredicate;
 
 public class VersionSupportMatrix {
-    private static final HashMap<String, List<ArtifactVersion>> overrideVersions = new HashMap<>();
-    static {
-//        final ArtifactVersion version = new DefaultArtifactVersion(FMLLoader.versionInfo().mcVersion());
-//        if (MavenVersionAdapter.createFromVersionSpec("[1.19.2]").containsVersion(version)) {
-//            // 1.19.2 is Compatible with 1.19.1
-//            add("languageloader.javafml", "42");
-//            add("mod.minecraft",          "1.19.1");
-//            add("mod.forge",              "42.0.9");
-//        }
-        if (FMLLoader.versionInfo().mcVersion().equals("1.20.1")) {
-            add("mod.forge",              "47.1.79");
-        }
-    }
-    private static void add(String key, String value) {
-        overrideVersions.computeIfAbsent(key, k -> new ArrayList<>()).add(new DefaultArtifactVersion(value));
-    }
+    private static final Map<String, List<ArtifactVersion>> overrideVersions = Map.of(
+            "mod.forge", List.of(new DefaultArtifactVersion("47.1.79"))
+    );
+
     public static <T> boolean testVersionSupportMatrix(VersionRange declaredRange, String lookupId, String type, BiPredicate<String, VersionRange> standardLookup) {
         if (standardLookup.test(lookupId, declaredRange)) return true;
-        List<ArtifactVersion> custom = overrideVersions.get(type +"." +lookupId);
-        return custom == null ? false  : custom.stream().anyMatch(declaredRange::containsVersion);
+        return testVersionSupportMatrix(declaredRange, lookupId, type);
+    }
+
+    public static boolean testVersionSupportMatrix(VersionRange declaredRange, String lookupId, String type) {
+        List<ArtifactVersion> custom = overrideVersions.get(type + '.' + lookupId);
+        return custom != null && custom.stream().anyMatch(declaredRange::containsVersion);
     }
 }

@@ -75,7 +75,6 @@ import static net.minecraftforge.fml.Logging.LOADING;
 public class ModLoader
 {
     private static final Logger LOGGER = LogManager.getLogger();
-    private static ModLoader INSTANCE;
     private final LoadingModList loadingModList;
 
     private final List<ModLoadingException> loadingExceptions;
@@ -89,7 +88,6 @@ public class ModLoader
 
     private ModLoader()
     {
-        INSTANCE = this;
         this.loadingModList = FMLLoader.getLoadingModList();
         this.loadingExceptions = FMLLoader.getLoadingModList().getErrors().stream()
                 .flatMap(ModLoadingException::fromEarlyException)
@@ -106,15 +104,15 @@ public class ModLoader
         CrashReportCallables.registerCrashCallable("ModLauncher", FMLLoader::getLauncherInfo);
         CrashReportCallables.registerCrashCallable("ModLauncher launch target", FMLLoader::launcherHandlerName);
         CrashReportCallables.registerCrashCallable("ModLauncher naming", FMLLoader::getNaming);
-        CrashReportCallables.registerCrashCallable("ModLauncher services", this::computeModLauncherServiceList);
-        CrashReportCallables.registerCrashCallable("FML Language Providers", this::computeLanguageList);
+        CrashReportCallables.registerCrashCallable("ModLauncher services", ModLoader::computeModLauncherServiceList);
+        CrashReportCallables.registerCrashCallable("FML Language Providers", ModLoader::computeLanguageList);
     }
 
-    private String computeLanguageList() {
+    private static String computeLanguageList() {
         return "\n"+FMLLoader.getLanguageLoadingProvider().applyForEach(lp->lp.name() +"@"+ lp.getClass().getPackage().getImplementationVersion()).collect(Collectors.joining("\n\t\t", "\t\t", ""));
     }
 
-    private String computeModLauncherServiceList() {
+    private static String computeModLauncherServiceList() {
         final List<Map<String, String>> mods = FMLLoader.modLauncherModList();
         return "\n"+mods.stream().map(mod->mod.getOrDefault("file","nofile")+
                 " "+mod.getOrDefault("name", "missing")+
@@ -123,9 +121,13 @@ public class ModLoader
                 collect(Collectors.joining("\n\t\t","\t\t",""));
     }
 
-    public static ModLoader get()
-    {
-        return INSTANCE == null ? INSTANCE = new ModLoader() : INSTANCE;
+    public static ModLoader get() {
+        return LazyInit.INSTANCE;
+    }
+
+    private static final class LazyInit {
+        private static final ModLoader INSTANCE = new ModLoader();
+        private LazyInit() {}
     }
 
     /**
@@ -167,7 +169,7 @@ public class ModLoader
         final List<ModContainer> modContainers = loadingModList.getModFiles().stream()
                 .map(ModFileInfo::getFile)
                 .map(this::buildMods)
-                .<ModContainer>mapMulti(Iterable::forEach)
+                .flatMap(Collection::stream)
                 .toList();
         if (!loadingExceptions.isEmpty()) {
             LOGGER.fatal(CORE, "Failed to initialize mod containers", loadingExceptions.get(0));
@@ -180,21 +182,27 @@ public class ModLoader
         this.modList = modList;
         var stateList = stateManager.getStates(ModLoadingPhase.GATHER);
         var progress = StartupMessageManager.addProgressBar("Mod Gather", stateList.stream().mapToInt(mls -> mls.size().applyAsInt(modList)).sum());
-        stateList.forEach(mls->dispatchAndHandleError(mls, syncExecutor, parallelExecutor, periodicTask, progress));
+        for (IModLoadingState mls : stateList) {
+            dispatchAndHandleError(mls, syncExecutor, parallelExecutor, periodicTask, progress);
+        }
         progress.complete();
     }
 
     public void loadMods(final ModWorkManager.DrivenExecutor syncExecutor, final Executor parallelExecutor, final Runnable periodicTask) {
         var stateList = stateManager.getStates(ModLoadingPhase.LOAD);
         var progress = StartupMessageManager.addProgressBar("Mod Loading", stateList.stream().mapToInt(mls -> mls.size().applyAsInt(modList)).sum());
-        stateList.forEach(mls->dispatchAndHandleError(mls, syncExecutor, parallelExecutor, periodicTask, progress));
+        for (IModLoadingState mls : stateList) {
+            dispatchAndHandleError(mls, syncExecutor, parallelExecutor, periodicTask, progress);
+        }
         progress.complete();
     }
 
     public void finishMods(final ModWorkManager.DrivenExecutor syncExecutor, final Executor parallelExecutor, final Runnable periodicTask) {
         var stateList = stateManager.getStates(ModLoadingPhase.COMPLETE);
         var progress = StartupMessageManager.addProgressBar("Mod Complete", stateList.stream().mapToInt(mls -> mls.size().applyAsInt(modList)).sum());
-        stateList.forEach(mls->dispatchAndHandleError(mls, syncExecutor, parallelExecutor, periodicTask, progress));
+        for (IModLoadingState mls : stateList) {
+            dispatchAndHandleError(mls, syncExecutor, parallelExecutor, periodicTask, progress);
+        }
         statusConsumer.ifPresent(c->c.accept(String.format("Mod loading complete - %d mods loaded", this.modList.size())));
         progress.complete();
     }
@@ -230,7 +238,7 @@ public class ModLoader
             Throwable t = e.getCause();
             final List<Throwable> notModLoading = Arrays.stream(t.getSuppressed())
                     .filter(obj -> !(obj instanceof ModLoadingException))
-                    .collect(Collectors.toList());
+                    .toList();
             if (!notModLoading.isEmpty()) {
                 LOGGER.fatal("Encountered non-modloading exceptions!", e);
                 statusConsumer.ifPresent(c->c.accept("ERROR DURING MOD LOADING"));
@@ -257,7 +265,7 @@ public class ModLoader
                 .stream()
                 .map(e -> buildModContainerFromTOML(modFile, modInfoMap, e))
                 .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+                .toList();
         if (containers.size() != modInfoMap.size()) {
             var modIds = modInfoMap.values().stream().map(IModInfo::getModId).sorted().collect(Collectors.toList());
             var containerIds = containers.stream().map(c -> c != null ? c.getModId() : "(null)").sorted().collect(Collectors.toList());
@@ -285,9 +293,11 @@ public class ModLoader
         try {
             final String modId = idToProviderEntry.getKey();
             final IModLanguageProvider.IModLanguageLoader languageLoader = idToProviderEntry.getValue();
-            IModInfo info = Optional.ofNullable(modInfoMap.get(modId)).
-                    // throw a missing metadata error if there is no matching modid in the modInfoMap from the mods.toml file
-                    orElseThrow(()->new ModLoadingException(null, ModLoadingStage.CONSTRUCT, "fml.modloading.missingmetadata", null, modId));
+            IModInfo info = modInfoMap.get(modId);
+            if (info == null) {
+                // throw a missing metadata error if there is no matching modid in the modInfoMap from the mods.toml file
+                throw new ModLoadingException(null, ModLoadingStage.CONSTRUCT, "fml.modloading.missingmetadata", null, modId);
+            }
             return languageLoader.loadMod(info, modFile.getScanResult(), FMLLoader.getGameLayer());
         } catch (ModLoadingException mle) {
             // exceptions are caught and added to the error list for later handling
@@ -307,6 +317,10 @@ public class ModLoader
 
     public boolean hasCompletedState(final String stateName) {
         IModLoadingState state = stateManager.findState(stateName);
+        return completedStates.contains(state);
+    }
+
+    public boolean hasCompletedState(IModLoadingState state) {
         return completedStates.contains(state);
     }
 

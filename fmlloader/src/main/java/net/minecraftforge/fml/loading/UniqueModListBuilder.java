@@ -47,12 +47,12 @@ public class UniqueModListBuilder
 
         // Select the newest by artifact version sorting of non-unique files thus identified
         uniqueModList = modFilesByFirstId.entrySet().stream()
-                .map(this::selectNewestModInfo)
+                .map(UniqueModListBuilder::selectNewestModInfo)
                 .toList();
 
         // Select the newest by artifact version sorting of non-unique files thus identified
         uniqueLibListWithVersion = libFilesWithVersionByModuleName.entrySet().stream()
-                .map(this::selectNewestModInfo)
+                .map(UniqueModListBuilder::selectNewestModInfo)
                 .toList();
 
         // Transform to the full mod id list
@@ -81,9 +81,9 @@ public class UniqueModListBuilder
                 )).toList();
 
         if (!dupedModErrors.isEmpty()) {
-            LOGGER.error(LOADING, "Found duplicate mods:\n{}", dupedModErrors.stream().collect(joining("\n")));
+            LOGGER.error(LOADING, "Found duplicate mods:\n{}", String.join("\n", dupedModErrors));
             throw new EarlyLoadingException("Duplicate mods found", null, dupedModErrors.stream()
-                    .map(s -> new EarlyLoadingException.ExceptionData(s))
+                    .map(EarlyLoadingException.ExceptionData::new)
                     .toList());
         }
 
@@ -93,13 +93,13 @@ public class UniqueModListBuilder
                 .map(mods -> String.format("\tLibrary: '%s' from files: %s",
                         getModId(mods.get(0)),
                         mods.stream()
-                                .map(modFile -> modFile.getFileName()).collect(joining(", "))
+                                .map(ModFile::getFileName).collect(joining(", "))
                 )).toList();
 
         if (!dupedLibErrors.isEmpty()) {
-            LOGGER.error(LOADING, "Found duplicate plugins or libraries:\n{}", dupedLibErrors.stream().collect(joining("\n")));
+            LOGGER.error(LOADING, "Found duplicate plugins or libraries:\n{}", String.join("\n", dupedLibErrors));
             throw new EarlyLoadingException("Duplicate plugins or libraries found", null, dupedLibErrors.stream()
-                    .map(s -> new EarlyLoadingException.ExceptionData(s))
+                    .map(EarlyLoadingException.ExceptionData::new)
                     .toList());
         }
 
@@ -114,18 +114,17 @@ public class UniqueModListBuilder
         return new UniqueModListData(loadedList, uniqueModFilesByFirstId);
     }
 
-    private ModFile selectNewestModInfo(Map.Entry<String, List<ModFile>> fullList) {
+    private static ModFile selectNewestModInfo(Map.Entry<String, List<ModFile>> fullList) {
         List<ModFile> modInfoList = fullList.getValue();
         if (modInfoList.size() > 1) {
             LOGGER.debug("Found {} mods for first modid {}, selecting most recent based on version data", modInfoList.size(), fullList.getKey());
-            modInfoList.sort(Comparator.comparing(this::getVersion).reversed());
-            LOGGER.debug("Selected file {} for modid {} with version {}", modInfoList.get(0).getFileName(), fullList.getKey(), this.getVersion(modInfoList.get(0)));
+            modInfoList.sort(Comparator.comparing(UniqueModListBuilder::getVersion).reversed());
+            LOGGER.debug("Selected file {} for modid {} with version {}", modInfoList.get(0).getFileName(), fullList.getKey(), getVersion(modInfoList.get(0)));
         }
         return modInfoList.get(0);
     }
 
-    private ArtifactVersion getVersion(final ModFile mf)
-    {
+    private static ArtifactVersion getVersion(final ModFile mf) {
         if (mf.getModFileInfo() == null || mf.getModInfos() == null || mf.getModInfos().isEmpty()) {
             return mf.getJarVersion();
         }

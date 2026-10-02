@@ -32,10 +32,10 @@ public class Scanner {
         fileToScan.scanFile(p -> fileVisitor(p, result));
         final List<IModLanguageProvider> loaders = fileToScan.getLoaders();
         if (loaders != null) {
-            loaders.forEach(loader -> {
+            for (IModLanguageProvider loader : loaders) {
                 LOGGER.debug(LogMarkers.SCAN, "Scanning {} with language loader {}", fileToScan.getFilePath(), loader.name());
                 loader.getFileVisitor().accept(result);
-            });
+            }
         }
         return result;
     }
