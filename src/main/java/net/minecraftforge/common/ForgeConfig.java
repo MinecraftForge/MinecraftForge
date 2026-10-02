@@ -32,6 +32,8 @@ public class ForgeConfig {
 
         public final BooleanValue useItemWithDurationZero;
 
+        public final BooleanValue fixNeighborUpdateOrder;
+
         Server(ForgeConfigSpec.Builder builder) {
             builder.comment("Server configuration settings")
                    .push("server");
@@ -80,6 +82,11 @@ public class ForgeConfig {
                     .comment("Set this to true to enable living entities to use items with durations of 0. Fixes being able to use Eyes of Ender repeatedly by holding down the use button. Disabled by default as it could change interactions with items of existing mods.")
                     .translation("forge.configgui.useItemWithDurationZero")
                     .define("useItemWithDurationZero", false);
+
+            fixNeighborUpdateOrder = builder
+                    .comment("Set this to true to fix the neighbor update order to match vanilla.")
+                    .translation("forge.configgui.fixNeighborUpdateOrder")
+                    .define("fixNeighborUpdateOrder", false);
 
             builder.pop();
         }
