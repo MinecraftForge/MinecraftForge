@@ -15,6 +15,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.IExtensionPoint;
 import net.minecraftforge.fml.ModList;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -127,11 +128,21 @@ public record ServerStatusPing(
         return Objects.hash(channels, mods, fmlNetworkVer);
     }
 
-    private List<Map.Entry<ResourceLocation, ChannelData>> getChannelsForMod(String modId)
+    private HashMap<String, List<Map.Entry<ResourceLocation, ChannelData>>> getChannelsByMod()
     {
-        return channels.entrySet().stream()
-                .filter(c -> c.getKey().getNamespace().equals(modId))
-                .toList();
+        var ret = new HashMap<String, List<Map.Entry<ResourceLocation, ChannelData>>>();
+        for (var channel : channels.entrySet())
+        {
+            var namespace = channel.getKey().getNamespace();
+            var list = ret.get(namespace);
+            if (list == null)
+            {
+                list = new ArrayList<>();
+                ret.put(namespace, list);
+            }
+            list.add(channel);
+        }
+        return ret;
     }
 
     private List<Map.Entry<ResourceLocation, ChannelData>> getNonModChannels()
@@ -161,11 +172,12 @@ public record ServerStatusPing(
         buf.writeBoolean(false); // placeholder for whether we are truncating
         buf.writeShort(mods.size()); // short so that we can replace it later in case of truncation
         int writtenCount = 0;
+        var channelsByMod = getChannelsByMod();
         for (var modEntry : mods.entrySet())
         {
             var isIgnoreServerOnly = modEntry.getValue().equals(NetworkConstants.IGNORESERVERONLY);
 
-            var channelsForMod = getChannelsForMod(modEntry.getKey());
+            var channelsForMod = channelsByMod.getOrDefault(modEntry.getKey(), List.of());
             var channelSizeAndVersionFlag = channelsForMod.size() << 1;
             if (isIgnoreServerOnly)
             {
