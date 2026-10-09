@@ -91,7 +91,7 @@
                      }
                  }
              } else {
-@@ -475,6 +_,12 @@
+@@ -475,6 +_,15 @@
              return null;
          }
  
@@ -101,6 +101,9 @@
 +
 +    private record OverlayInfo(BlockState state, BlockPos pos) {}
 +    private static @Nullable OverlayInfo getOverlayBlock(final LocalPlayer player, final Frustum frustum) {
++        if (player.noPhysics) // Spectator mode gets no overlays
++            return null;
++
          AABB nearPlaneBB = frustum.getNearPlaneBounds().move(player.getEyePosition());
          BlockPos.MutableBlockPos testPos = new BlockPos.MutableBlockPos();
  
