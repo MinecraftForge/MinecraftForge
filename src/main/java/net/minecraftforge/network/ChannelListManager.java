@@ -10,7 +10,9 @@ import io.netty.buffer.Unpooled;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.network.Connection;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.common.ForgeConfig;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.network.ChannelRegistrationChangeEvent;
 import net.minecraftforge.event.network.CustomPayloadEvent;
@@ -22,6 +24,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.stream.Collectors;
 
 @ApiStatus.Internal // TODO: Decide what I want to have public, Right now it should just be add/remove channels.
 public class ChannelListManager {
@@ -39,7 +42,7 @@ public class ChannelListManager {
 
     private static void registerListener(CustomPayloadEvent evt) {
         var ctx = evt.getSource();
-        updateFrom(ctx, evt.getPayload(), ChannelRegistrationChangeEvent.Type.REGISTER);
+        updateFrom(ctx, evt.getPayload(), ChannelRegistrationChangeEvent.Type.REGISTER, ctx.isClientSide());
         ctx.setPacketHandled(true);
         // Send the client's channels to the server whenever asked. If we're in the login state then our login wrapper will unwrap for us.
         if (ctx.isClientSide())
@@ -48,7 +51,7 @@ public class ChannelListManager {
 
     private static void unregisterListener(CustomPayloadEvent evt) {
         var ctx = evt.getSource();
-        updateFrom(ctx, evt.getPayload(), ChannelRegistrationChangeEvent.Type.UNREGISTER);
+        updateFrom(ctx, evt.getPayload(), ChannelRegistrationChangeEvent.Type.UNREGISTER, ctx.isClientSide());
         ctx.setPacketHandled(true);
     }
 
@@ -100,7 +103,7 @@ public class ChannelListManager {
         channel.send(buf, connection);
     }
 
-    private static void updateFrom(CustomPayloadEvent.Context source, FriendlyByteBuf buffer, final ChannelRegistrationChangeEvent.Type changeType) {
+    private static void updateFrom(CustomPayloadEvent.Context source, FriendlyByteBuf buffer, final ChannelRegistrationChangeEvent.Type changeType, boolean isClient) {
         byte[] data = new byte[Math.max(buffer.readableBytes(), 0)];
         buffer.readBytes(data);
         var channels = new HashSet<String>();
@@ -133,16 +136,41 @@ public class ChannelListManager {
 
         ForgeEventFactory.onChannelRegistrationChange(source.getConnection(), changeType, changed);
 
+        // It is a known issue, that I don't really care about, that we don't get the true in-memory size of each channel due to character encoding.
+        // A sane limit of 1KB will be enough to catch any malicious actors even with non-8-bit strings.
         var list = NetworkContext.get(source.getConnection());
         for (var channel : changed) {
-            boolean fire = changeType == ChannelRegistrationChangeEvent.Type.UNREGISTER
-                ? list.remoteChannels.remove(channel)
-                : list.remoteChannels.add(channel);
+            boolean fire = false;
+            if (changeType == ChannelRegistrationChangeEvent.Type.UNREGISTER) {
+                fire = list.remoteChannels.remove(channel);
+                if (fire)
+                    list.remoteChannelsSize -= channel.toString().length();
+            } else {
+                fire = list.remoteChannels.add(channel);
+                if (fire)
+                    list.remoteChannelsSize += channel.toString().length();
+            }
 
             if (fire) {
                 var target = NetworkRegistry.findTarget(channel);
                 if (target != null)
                     target.registrationChange(changeType == ChannelRegistrationChangeEvent.Type.REGISTER);
+            }
+        }
+
+        if (list.remoteChannelsSize >= NetworkRegistry.getChannelMemorySize() &&  list.remoteChannelsSize >= ForgeConfig.COMMON.channelListLimit.get()) {
+            LOGGER.warn("Received too many network channels, {} channels using {} bytes, Limit is currently {}, to change edit the Forge {} in config\forge_common.toml",
+                list.remoteChannels.size(), list.remoteChannelsSize, ForgeConfig.COMMON.channelListLimit.get(), ForgeConfig.COMMON.channelListLimit.getPath().stream().collect(Collectors.joining("."))
+            );
+
+            if (isClient) {
+                // We don't want to allow the server to screw with us, so just remove the added channels
+                for (var channel : changed) {
+                    if (list.remoteChannels.remove(channel))
+                        list.remoteChannelsSize -= channel.toString().length();
+                }
+            } else {
+                source.getSender().connection.disconnect(Component.translatable("forge.server.channellistlimit.kick"));
             }
         }
     }

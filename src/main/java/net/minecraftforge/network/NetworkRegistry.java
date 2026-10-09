@@ -41,7 +41,8 @@ public class NetworkRegistry {
     static final Logger LOGGER = LogManager.getLogger();
     static final Marker NETREGISTRY = MarkerManager.getMarker("NETREGISTRY");
 
-    static Map<ResourceLocation, NetworkInstance> instances = Collections.synchronizedMap(new HashMap<>());
+    private static Map<ResourceLocation, NetworkInstance> instances = Collections.synchronizedMap(new HashMap<>());
+    private static long memorySize = 0;
 
     public static boolean acceptsVanillaClientConnections() {
         return (instances.isEmpty() || listRejectedVanillaMods(n -> n.clientAcceptedVersions).isEmpty()) && DataPackRegistriesHooks.getSyncedCustomRegistries().isEmpty();
@@ -178,5 +179,31 @@ public class NetworkRegistry {
         var ret = new Object2IntOpenHashMap<ResourceLocation>(instances.size());
         instances.forEach((k, v) -> ret.put(k, v.getNetworkProtocolVersion()));
         return ret;
+    }
+
+    static long getChannelMemorySize() {
+        return memorySize;
+    }
+
+    static void register(NetworkInstance instance) {
+        checkLock(instance);
+
+        var name = instance.getChannelName();
+        if (NetworkRegistry.instances.containsKey(name))
+            error("Channel " + name + " already registered.");
+        else
+            memorySize += name.toString().length(); // This can fail if people don't use our api. So this is a best effort.
+
+        instances.put(name, instance);
+    }
+
+    private static void checkLock(NetworkInstance instance) {
+        if (NetworkRegistry.lock)
+            error("Attempted to register channel " + instance.getChannelName() + " even though registry phase is over");
+    }
+
+    private static void error(String message) {
+        NetworkRegistry.LOGGER.error(NetworkRegistry.NETREGISTRY, message);
+        throw new IllegalArgumentException(message);
     }
 }
