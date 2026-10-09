@@ -111,6 +111,8 @@ public class NetworkContext {
 
     @ApiStatus.Internal
     Set<Identifier> remoteChannels = new HashSet<>();
+    @ApiStatus.Internal
+    long remoteChannelsSize = 0;
     private Set<Identifier> remoteChannelsView = Collections.unmodifiableSet(this.remoteChannels);
 
     @ApiStatus.Internal
