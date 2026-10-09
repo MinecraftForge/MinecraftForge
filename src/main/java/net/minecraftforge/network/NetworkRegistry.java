@@ -43,6 +43,7 @@ public class NetworkRegistry {
 
     private static Map<ResourceLocation, NetworkInstance> instances = Collections.synchronizedMap(new HashMap<>());
     private static Map<ResourceLocation, NetworkInstance> byName = Collections.synchronizedMap(new HashMap<>());
+    private static long memorySize = 0;
 
     public static boolean acceptsVanillaClientConnections() {
         return listRejectedVanillaMods(n -> n.clientAcceptedVersions).isEmpty() && DataPackRegistriesHooks.getSyncedCustomRegistries().isEmpty();
@@ -199,7 +200,12 @@ public class NetworkRegistry {
         if (NetworkRegistry.byName.containsKey(name))
             error("Payload name " + name + " already registered.");
 
+        memorySize += name.toString().length(); // This can fail if people don't use our api. So this is a best effort.
         byName.put(name, instance);
+    }
+
+    static long getChannelMemorySize() {
+        return memorySize;
     }
 
     static void register(NetworkInstance instance) {
