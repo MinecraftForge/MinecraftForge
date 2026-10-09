@@ -204,6 +204,10 @@
   "forge.configgui.stabilizeDirectionGetNearest": "Stabilize Direction Get Nearest",
   "forge.configgui.stabilizeDirectionGetNearest.tooltip": "When enabled, a slightly biased Direction#getNearest calculation will be used to prevent normal fighting on 45 degree angle faces.",
 
+  "forge.configgui.channellistlimit": "Channel List Size Limit",
+  "forge.configgui.channellistlimit.tooltip": "Maximum size to use to store the channel list for a network connection. Some malicious actors may use this to use up all your memory. A sane default is 1KB (1024), but may need to be expanded for larger modpacks.",
+  "forge.server.channellistlimit.kick": "Received too many networking channels",
+
   "forge.controlsgui.shift": "SHIFT + %s",
   "forge.controlsgui.control": "CTRL + %s",
   "forge.controlsgui.control.mac": "CMD + %s",

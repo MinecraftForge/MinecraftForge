@@ -89,6 +89,8 @@ public class ForgeConfig {
         public final ForgeConfigSpec.EnumValue<MigrationHelperMode> migrationHelperMode;
 
         public final ForgeConfigSpec.BooleanValue fixGameTestBlockPosAsserts;
+        
+        public final ForgeConfigSpec.LongValue channelListLimit;
 
         Common(ForgeConfigSpec.Builder builder) {
             builder.comment("General configuration settings")
@@ -105,6 +107,17 @@ public class ForgeConfig {
                     This is kept in the common config so that development environments that rely on old behavior do not need to continuously set this in a server config.""")
                     .translation("forge.configgui.fixGameTestBlockPosAsserts")
                     .define("fixGameTestBlockPosAsserts", true);
+
+            channelListLimit = builder
+        		.comment(
+    				"Maximum size to use to store the channel list for a network connection.",
+    				"The other end of the connection may send as many channels as it wishes.",
+    				"Some malicious actors may use this to use up all your memory causing OutOfMemoryException",
+    				"A sane default is 1KB (1024), but may need to be expanded for larger modpacks.",
+    				"Forge will auto-adjust this if mods register their channels using our channel manager."
+				)
+        		.translation("forge.configui.channellistlimit")
+        		.defineInRange("channelListLimit", 1024, 1, Long.MAX_VALUE);
 
             builder.pop();
         }
