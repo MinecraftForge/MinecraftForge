@@ -109,7 +109,11 @@ public class ClientCommandHandler {
             new CommandSource() {
                 @Override
                 public void sendSystemMessage(Component message) {
-                    mc.gui.getChat().addClientSystemMessage(message);
+                	var chat = mc.gui.getChat();
+                	if (mc.isSameThread())
+                		chat.addClientSystemMessage(message);
+                	else
+                		mc.execute(() -> chat.addClientSystemMessage(message));
                 }
 
                 @Override
