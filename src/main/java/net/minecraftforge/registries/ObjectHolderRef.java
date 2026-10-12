@@ -19,7 +19,7 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("rawtypes")
-class ObjectHolderRef implements Consumer<Predicate<ResourceLocation>>
+class ObjectHolderRef implements Consumer<Predicate<ResourceLocation>>, Runnable
 {
     private static final Logger LOGGER  = LogManager.getLogger();
     private final Field field;
@@ -87,7 +87,12 @@ class ObjectHolderRef implements Consumer<Predicate<ResourceLocation>>
     {
         if (registry == null || !filter.test(registry.getRegistryName()))
             return;
+        run();
+    }
 
+    @Override
+    public void run()
+    {
         Object thing;
         if (registry.containsKey(injectedObject))
         {

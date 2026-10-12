@@ -344,7 +344,7 @@ public class GameData {
                 if (forgeRegistry != null)
                     forgeRegistry.freeze();
                 LOGGER.debug(REGISTRIES, "Applying holder lookups: {}", registryKey.location());
-                ObjectHolderRegistry.applyObjectHolders(registryKey.location()::equals);
+                ObjectHolderRegistry.applyObjectHolders(registryKey.location());
                 LOGGER.debug(REGISTRIES, "Holder lookups applied: {}", registryKey.location());
             } catch (Throwable t)
             {
