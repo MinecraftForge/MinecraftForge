@@ -11,6 +11,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -40,10 +42,22 @@ public class ObjectHolderRegistry
      * The internal list is backed by a HashSet so it is HIGHLY recommended you implement a proper equals
      * and hashCode function to de-duplicate callers here.
      * The default @ObjectHolder implementation uses the hashCode/equals for the field the annotation is on.
+     *
+     * @deprecated Use {{@link #addHandler(ResourceLocation, Runnable)} if you are only targeting a single registry
      */
     public static synchronized void addHandler(Consumer<Predicate<ResourceLocation>> ref)
     {
         objectHolders.add(ref);
+    }
+
+
+    /**
+     * Registers a handler that is run after the named registry has been injected and finalized.
+     * Handlers are kept in a HashSet per registry, so the same instance is only ever registered once.
+     */
+    public static synchronized void addHandler(ResourceLocation registry, Runnable ref)
+    {
+        namedHandlers.computeIfAbsent(registry, id -> new HashSet<>()).add(ref);
     }
 
     /**
@@ -60,12 +74,36 @@ public class ObjectHolderRegistry
         return objectHolders.remove(ref);
     }
 
+    /**
+     * Removes a handler registered with {@link #addHandler(ResourceLocation, Runnable)}.
+     *
+     * @return true if handler was matched and removed.
+     */
+    public static synchronized boolean removeHandler(ResourceLocation registry, Runnable ref)
+    {
+        var handlers = namedHandlers.get(registry);
+        return handlers != null && handlers.remove(ref);
+    }
+
+    /**
+     * Registers a check that is run once, before the handlers of the next holder pass.
+     * Used to report holders that point at a registry that does not exist.
+     */
+    public static synchronized void addValidator(Runnable ref)
+    {
+        validators.add(ref);
+    }
+
     //==============================================================
     // Everything below is internal, do not use.
     //==============================================================
 
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Set<Consumer<Predicate<ResourceLocation>>> objectHolders = new HashSet<>();
+    // Order is not guaranteed, the old implementation kept every handler in one HashSet.
+    private static final Map<ResourceLocation, Set<Runnable>> namedHandlers = new HashMap<>();
+    private static final List<Runnable> validators = new ArrayList<>();
+
     private static final Type OBJECT_HOLDER = Type.getType(ObjectHolder.class);
     private static final Type MOD = Type.getType(Mod.class);
     // Hardcoded list of vanilla classes that should have object holders for each field of the given registry type.
@@ -149,9 +187,10 @@ public class ObjectHolderRegistry
                 throw new RuntimeException(ex);
             }
         }
+        ResourceLocation regName = ResourceLocation.parse(registryName);
         if (isClass)
         {
-            scanClassForFields(classModIds, type, new ResourceLocation(registryName), registryClass, value, clazz, extractFromValue);
+            scanClassForFields(classModIds, type, regName, registryClass, value, clazz, extractFromValue);
         }
         else
         {
@@ -168,9 +207,9 @@ public class ObjectHolderRegistry
             try
             {
                 Field f = clazz.getDeclaredField(annotationTarget);
-                ObjectHolderRef ref = ObjectHolderRef.create(new ResourceLocation(registryName), f, value, extractFromValue);
+                ObjectHolderRef ref = ObjectHolderRef.create(regName, f, value, extractFromValue);
                 if (ref != null)
-                    addHandler(ref);
+                    addHandler(regName, ref);
             }
             catch (NoSuchFieldException ex)
             {
@@ -191,7 +230,7 @@ public class ObjectHolderRegistry
                 continue;
             ObjectHolderRef ref = ObjectHolderRef.create(registryName, f, value + ':' + f.getName().toLowerCase(Locale.ENGLISH), extractFromExistingValues);
             if (ref != null)
-                addHandler(ref);
+                addHandler(registryName, ref);
         }
     }
 
@@ -207,38 +246,109 @@ public class ObjectHolderRegistry
         throw new IllegalStateException("No registry name was declared for " + declaration);
     }
 
-    public static void applyObjectHolders()
-    {
-        try
-        {
+
+    private static final Predicate<ResourceLocation> ALWAYS_TRUE = name -> true;
+    public static void applyObjectHolders() {
+        try {
             LOGGER.debug(ForgeRegistry.REGISTRIES, "Applying holder lookups");
-            applyObjectHolders(key -> true);
+            var exceptions = new ArrayList<Exception>();
+            validate(exceptions);
+            // Call named registries
+            for (var handlers : namedHandlers.values())
+                apply(handlers, exceptions);
+
+            // Call legacy for backward compatibility
+            for (var handler : objectHolders) {
+                try {
+                    handler.accept(ALWAYS_TRUE);
+                } catch (Exception e) {
+                    exceptions.add(e);
+                }
+            }
+
+            throwIfNeeded(exceptions);
             LOGGER.debug(ForgeRegistry.REGISTRIES, "Holder lookups applied");
-        } catch (RuntimeException e)
-        {
+        } catch (RuntimeException e) {
             // It is more important that the calling contexts continue without exception to prevent further cascading errors
             LOGGER.error("", e);
         }
     }
 
+    /**
+     * @deprecated use {@link #applyObjectHolders(ResourceLocation)}
+     */
     public static void applyObjectHolders(Predicate<ResourceLocation> filter)
     {
-        RuntimeException aggregate = new RuntimeException("Failed to apply some object holders, see suppressed exceptions for details");
-        objectHolders.forEach(objectHolder -> {
-            try
-            {
-                objectHolder.accept(filter);
-            }
-            catch (Exception e)
-            {
-                aggregate.addSuppressed(e);
-            }
-        });
+        LOGGER.debug(ForgeRegistry.REGISTRIES, "Apply filtered holder lookups");
+        var exceptions = new ArrayList<Exception>();
+        validate(exceptions);
 
-        if (aggregate.getSuppressed().length > 0)
-        {
-            throw aggregate;
+        // call new registries if needed
+        for (var entry : namedHandlers.entrySet()) {
+            if (filter.test(entry.getKey())) {
+                apply(entry.getValue(), exceptions);
+            }
         }
+
+        // Call legacy
+        for (Consumer<Predicate<ResourceLocation>> objectHolder : objectHolders) {
+            try {
+                objectHolder.accept(filter);
+            } catch (Exception e) {
+                exceptions.add(e);
+            }
+        }
+        throwIfNeeded(exceptions);
+        LOGGER.debug(ForgeRegistry.REGISTRIES, "Holder lookups applied");
+    }
+
+    /** Runs the handlers of one registry. */
+    public static void applyObjectHolders(ResourceLocation registry) {
+        var exceptions = new ArrayList<Exception>();
+        validate(exceptions);
+        var handlers = namedHandlers.get(registry);
+        if (handlers != null)
+            apply(handlers, exceptions);
+        throwIfNeeded(exceptions);
+    }
+
+    // Each validator runs once, at the first holder pass after it was registered.
+    private static void validate(List<Exception> exceptions) {
+        List<Runnable> pending;
+        synchronized (ObjectHolderRegistry.class) {
+            if (validators.isEmpty())
+                return;
+            pending = new ArrayList<>(validators);
+            validators.clear();
+        }
+
+        for (var validator : pending) {
+            try {
+                validator.run();
+            } catch (Exception e) {
+                exceptions.add(e);
+            }
+        }
+    }
+
+    private static void apply(Set<Runnable> handlers, List<Exception> exceptions) {
+        for (var handler : handlers) {
+            try {
+                handler.run();
+            } catch (Exception e) {
+                exceptions.add(e);
+            }
+        }
+    }
+
+    private static void throwIfNeeded(List<Exception> exceptions) {
+        if (exceptions.isEmpty())
+            return;
+
+        var aggregate = new RuntimeException("Failed to apply some object holders, see suppressed exceptions for details");
+        for (var e : exceptions)
+            aggregate.addSuppressed(e);
+        throw aggregate;
     }
 
     private record VanillaObjectHolderData(String holderClass, String registryName, String registryType) {}
