@@ -27,7 +27,6 @@ public final class RegistryObject<T> implements Supplier<T> {
     private final Identifier name;
     @Nullable
     private final ResourceKey<T> key;
-    private final boolean optionalRegistry;
     @Nullable
     private T value;
     @Nullable
@@ -129,7 +128,6 @@ public final class RegistryObject<T> implements Supplier<T> {
     private RegistryObject() {
         this.name = null;
         this.key = null;
-        this.optionalRegistry = false;
     }
 
     @SuppressWarnings("unchecked")
@@ -138,7 +136,6 @@ public final class RegistryObject<T> implements Supplier<T> {
             throw new IllegalArgumentException("Invalid registry argument, must not be null");
         this.name = name;
         this.key = (ResourceKey<T>) ResourceKey.create(registry.getRegistryKey(), name);
-        this.optionalRegistry = false;
         ObjectHolderRegistry.addHandler(registry.getRegistryName(), () -> this.updateReference((IForgeRegistry<? extends T>) registry));
         this.updateReference((IForgeRegistry<? extends T>) registry);
     }
@@ -146,7 +143,6 @@ public final class RegistryObject<T> implements Supplier<T> {
     private RegistryObject(final Identifier name, final Identifier registryName, final String modid, boolean optionalRegistry) {
         this.name = name;
         this.key = ResourceKey.create(ResourceKey.createRegistryKey(registryName), name);
-        this.optionalRegistry = optionalRegistry;
         if (!optionalRegistry) {
             final Throwable callerStack = new Throwable("Calling Site from mod: " + modid);
             ObjectHolderRegistry.addValidator(() -> {
@@ -164,7 +160,6 @@ public final class RegistryObject<T> implements Supplier<T> {
         @SuppressWarnings("unchecked")
         var typed = (ResourceKey<Registry<T>>)registry;
         this.key = ResourceKey.create(typed, name);
-        this.optionalRegistry = true;
     }
 
     /**
