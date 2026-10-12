@@ -1,0 +1,15 @@
+--- a/net/minecraft/server/jsonrpc/api/MethodInfo.java
++++ b/net/minecraft/server/jsonrpc/api/MethodInfo.java
+@@ -27,10 +_,10 @@
+     }
+ 
+     static <Params, Result> MapCodec<MethodInfo<Params, Result>> typedCodec() {
+-        return (MapCodec)RecordCodecBuilder.<MethodInfo>mapCodec(
++        return RecordCodecBuilder.mapCodec(
+             p_449116_ -> p_449116_.group(
+                     Codec.STRING.fieldOf("description").forGetter(MethodInfo::description),
+-                    paramsTypedCodec().fieldOf("params").forGetter(MethodInfo::params),
++                    MethodInfo.<Params>paramsTypedCodec().fieldOf("params").forGetter(MethodInfo::params),
+                     ResultInfo.<Result>typedCodec().optionalFieldOf("result").forGetter(MethodInfo::result)
+                 )
+                 .apply(p_449116_, MethodInfo::new)

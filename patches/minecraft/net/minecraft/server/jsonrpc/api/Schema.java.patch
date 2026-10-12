@@ -1,0 +1,23 @@
+--- a/net/minecraft/server/jsonrpc/api/Schema.java
++++ b/net/minecraft/server/jsonrpc/api/Schema.java
+@@ -46,15 +_,15 @@
+             "Schema",
+             p_422846_ -> RecordCodecBuilder.create(
+                 p_449128_ -> p_449128_.group(
+-                        ReferenceUtil.REFERENCE_CODEC.optionalFieldOf("$ref").<Schema>forGetter(Schema::reference),
++                        ReferenceUtil.REFERENCE_CODEC.optionalFieldOf("$ref").forGetter(Schema::reference),
+                         ExtraCodecs.compactListCodec(Codec.STRING)
+                             .optionalFieldOf("type", List.of())
+-                            .<Schema>forGetter(Schema::type),
+-                        p_422846_.optionalFieldOf("items").<Schema>forGetter(Schema::items),
++                            .forGetter(Schema::type),
++                        p_422846_.optionalFieldOf("items").forGetter(Schema::items),
+                         Codec.unboundedMap(Codec.STRING, p_422846_)
+                             .optionalFieldOf("properties", Map.of())
+-                            .<Schema>forGetter(Schema::properties),
+-                        Codec.STRING.listOf().optionalFieldOf("enum", List.<String>of()).<Schema>forGetter(Schema::enumValues)
++                            .forGetter(Schema::properties),
++                        Codec.STRING.listOf().optionalFieldOf("enum", List.of()).forGetter(Schema::enumValues)
+                     )
+                     .apply(p_449128_, (p_449121_, p_449122_, p_449123_, p_449124_, p_449125_) -> null)
+             )
