@@ -102,7 +102,7 @@ public record ServerStatusPing(
 
     public ServerStatusPing() {
         this(
-            NetworkRegistry.buildChannelVersionsForListPing(),
+            NetworkRegistry.getChannelVersionsForListPing(),
             Util.make(new HashMap<>(), map -> ModList.forEachModContainer((modid, mc) ->
                 map.put(modid, mc.getCustomExtension(IExtensionPoint.DisplayTest.class)
                     .map(IExtensionPoint.DisplayTest::suppliedVersion)

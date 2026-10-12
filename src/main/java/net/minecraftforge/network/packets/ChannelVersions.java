@@ -19,7 +19,7 @@ public record ChannelVersions(Map<Identifier, @NotNull Integer> channels) {
     public static StreamCodec<FriendlyByteBuf, ChannelVersions> STREAM_CODEC = StreamCodec.ofMember(ChannelVersions::encode, ChannelVersions::decode);
 
     public ChannelVersions() {
-        this(NetworkRegistry.buildChannelVersions());
+        this(NetworkRegistry.getChannelVersions());
     }
 
     public static ChannelVersions decode(FriendlyByteBuf buf) {

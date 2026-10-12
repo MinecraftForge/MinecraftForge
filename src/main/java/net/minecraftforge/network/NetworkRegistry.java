@@ -20,7 +20,6 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import io.netty.util.Attribute;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,6 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -41,8 +42,22 @@ public class NetworkRegistry {
     static final Logger LOGGER = LogManager.getLogger();
     static final Marker NETREGISTRY = MarkerManager.getMarker("NETREGISTRY");
 
-    private static Map<Identifier, NetworkInstance> instances = Collections.synchronizedMap(new HashMap<>());
-    private static Map<Identifier, NetworkInstance> byName = Collections.synchronizedMap(new HashMap<>());
+    private static final Map<Identifier, NetworkInstance> instances = new ConcurrentHashMap<>();
+    private static final Map<Identifier, NetworkInstance> byName = new ConcurrentHashMap<>();
+
+    private static Map<Identifier, NetworkInstance> getByName() {
+        final class LazyInit {
+            static final Map<Identifier, NetworkInstance> BY_NAME = Map.copyOf(byName);
+        }
+        return LazyInit.BY_NAME;
+    }
+
+    private static Map<Identifier, NetworkInstance> getInstances() {
+        final class LazyInit {
+            static final Map<Identifier, NetworkInstance> INSTANCES = Map.copyOf(instances);
+        }
+        return LazyInit.INSTANCES;
+    }
 
     public static boolean acceptsVanillaClientConnections() {
         return listRejectedVanillaMods(n -> n.clientAcceptedVersions).isEmpty() && DataPackRegistriesHooks.getSyncedCustomRegistries().isEmpty();
@@ -54,20 +69,28 @@ public class NetworkRegistry {
 
     @Nullable
     public static NetworkInstance findTarget(Identifier Identifier) {
-        return byName.get(Identifier);
+        return getByName().get(Identifier);
     }
 
-    static Map<Identifier, ServerStatusPing.ChannelData> buildChannelVersionsForListPing() {
-        var ret = new HashMap<Identifier, ServerStatusPing.ChannelData>();
+    public static Map<Identifier, ServerStatusPing.ChannelData> getChannelVersionsForListPing() {
+        final class LazyInit {
+            static final Map<Identifier, ServerStatusPing.ChannelData> CHANNEL_VERSIONS_FOR_LIST_PING = buildChannelVersionsForListPing();
+        }
+        return LazyInit.CHANNEL_VERSIONS_FOR_LIST_PING;
+    }
+
+    private static Map<Identifier, ServerStatusPing.ChannelData> buildChannelVersionsForListPing() {
+        var instances = getInstances();
+        var ret = new HashMap<Identifier, ServerStatusPing.ChannelData>(instances.size(), 1.0f);
         for (var channel : instances.values()) {
             ret.put(channel.getChannelName(), channel.pingData);
         }
-        return ret;
+        return Map.copyOf(ret);
     }
 
     static List<String> listRejectedVanillaMods(Function<NetworkInstance, VersionTest> testFunction) {
         var results = new ArrayList<String>();
-        for (var net : instances.values()) {
+        for (var net : getInstances().values()) {
             boolean test = testFunction.apply(net).accepts(VersionTest.Status.VANILLA, -1);
             LOGGER.debug(NETREGISTRY, "Channel '{}' : Vanilla acceptance test: {}", net.getChannelName(), test ? "ACCEPTED" : "REJECTED");
             if (!test)
@@ -89,7 +112,7 @@ public class NetworkRegistry {
 
         Set<Identifier> missing = new HashSet<>();
         Map<Identifier, NetworkMismatchData.Version> results = new HashMap<>();
-        for (var net : instances.values()) {
+        for (var net : getInstances().values()) {
             var name = net.getChannelName();
             VersionTest test = fromClient ? net.clientAcceptedVersions : net.serverAcceptedVersions;
 
@@ -125,7 +148,7 @@ public class NetworkRegistry {
         Set<Identifier> handled = new HashSet<>();
         var rejected = new ArrayList<String>();
 
-        for (var net : instances.values()) {
+        for (var net : getInstances().values()) {
             var status = VersionTest.Status.MISSING;
             var version = 0;
             if (incoming.containsKey(net.getChannelName())) {
@@ -161,16 +184,25 @@ public class NetworkRegistry {
         return true;
     }
 
-    static boolean lock = false;
+    private static final AtomicBoolean LOCK = new AtomicBoolean(false);
     public static void lock() {
-        lock = true;
+        getByName();
+        getInstances();
+        getChannelVersions();
+        getChannelVersionsForListPing();
+        getRegisterList();
+
+        byName.clear();
+        instances.clear();
+
+        LOCK.setRelease(true);
     }
 
     @SuppressWarnings("unchecked")
     public static void onConnectionStart(Connection connection) {
         ForgeEventFactory.onConnectionStart(connection);
         var channel = connection.channel();
-        for (var inst : instances.values()) {
+        for (var inst : getInstances().values()) {
             if (inst.attributes != null)
                 inst.attributes.forEach((k, v) -> ((Attribute<Object>)channel.attr(k)).compareAndSet(null, (Object)v.apply(connection)));
             if (inst.channelHandler != null)
@@ -178,42 +210,58 @@ public class NetworkRegistry {
         }
     }
 
-    public static Map<Identifier, Integer> buildChannelVersions() {
-        var ret = new Object2IntOpenHashMap<Identifier>(instances.size());
+    public static Map<Identifier, Integer> getChannelVersions() {
+        final class LazyInit {
+            static final Map<Identifier, Integer> CHANNEL_VERSIONS = buildChannelVersions();
+        }
+        return LazyInit.CHANNEL_VERSIONS;
+    }
+
+    private static Map<Identifier, Integer> buildChannelVersions() {
+        var instances = getInstances();
+        var ret = new HashMap<Identifier, Integer>(instances.size(), 1.0f);
         for (var net : instances.values()) {
             ret.put(net.getChannelName(), net.getNetworkProtocolVersion());
         }
-        return ret;
+
+        return Map.copyOf(ret);
     }
 
-    static List<Identifier> buildRegisterList() {
-        var ret = new ArrayList<Identifier>(byName.keySet().size());
+    public static List<Identifier> getRegisterList() {
+        final class LazyInit {
+            static final List<Identifier> REGISTER_LIST = buildRegisterList();
+        }
+        return LazyInit.REGISTER_LIST;
+    }
+
+    private static List<Identifier> buildRegisterList() {
+        var byName = getByName();
+        var ret = new ArrayList<Identifier>(byName.size());
         for (var name : byName.keySet())
             if (!"minecraft".equals(name.getNamespace()))
                 ret.add(name);
-        return ret;
+
+        return List.copyOf(ret);
     }
 
     static void register(NetworkInstance instance, Identifier name) {
         checkLock(instance);
-        if (NetworkRegistry.byName.containsKey(name))
-            error("Payload name " + name + " already registered.");
 
-        byName.put(name, instance);
+        if (byName.putIfAbsent(name, instance) != null)
+            error("Payload name " + name + " already registered.");
     }
 
     static void register(NetworkInstance instance) {
         checkLock(instance);
 
         var name = instance.getChannelName();
-        if (NetworkRegistry.instances.containsKey(name))
-            error("Channel " + name + " already registered.");
 
-        instances.put(name, instance);
+        if (instances.putIfAbsent(name, instance) != null)
+            error("Channel " + name + " already registered.");
     }
 
     private static void checkLock(NetworkInstance instance) {
-        if (NetworkRegistry.lock)
+        if (LOCK.getAcquire())
             error("Attempted to register channel " + instance.getChannelName() + " even though registry phase is over");
     }
 
