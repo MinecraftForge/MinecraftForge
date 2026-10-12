@@ -26,8 +26,7 @@ public final class RegistryObject<T> implements Supplier<T>
     @Nullable
     private final ResourceLocation name;
     @Nullable
-    private ResourceKey<T> key;
-    private final boolean optionalRegistry;
+    private final ResourceKey<T> key;
     @Nullable
     private T value;
     @Nullable
@@ -135,7 +134,6 @@ public final class RegistryObject<T> implements Supplier<T>
     private RegistryObject() {
         this.name = null;
         this.key = null;
-        this.optionalRegistry = false;
     }
 
     @SuppressWarnings("unchecked")
@@ -145,12 +143,7 @@ public final class RegistryObject<T> implements Supplier<T>
             throw new IllegalArgumentException("Invalid registry argument, must not be null");
         this.name = name;
         this.key = (ResourceKey<T>) ResourceKey.create(registry.getRegistryKey(), name);
-        this.optionalRegistry = false;
-        ObjectHolderRegistry.addHandler(pred ->
-        {
-            if (pred.test(registry.getRegistryName()))
-                this.updateReference((IForgeRegistry<? extends T>) registry);
-        });
+        ObjectHolderRegistry.addHandler(registry.getRegistryName(), () -> this.updateReference((IForgeRegistry<? extends T>) registry));
         this.updateReference((IForgeRegistry<? extends T>) registry);
     }
 
@@ -158,31 +151,14 @@ public final class RegistryObject<T> implements Supplier<T>
     {
         this.name = name;
         this.key = ResourceKey.create(ResourceKey.createRegistryKey(registryName), name);
-        this.optionalRegistry = optionalRegistry;
-        final Throwable callerStack = new Throwable("Calling Site from mod: " + modid);
-        ObjectHolderRegistry.addHandler(new Consumer<>()
-        {
-            private boolean registryExists = false;
-            private boolean invalidRegistry = false;
-
-            @Override
-            public void accept(Predicate<ResourceLocation> pred)
-            {
-                if (invalidRegistry)
-                    return;
-                if (!RegistryObject.this.optionalRegistry && !registryExists)
-                {
-                    if (!registryExists(registryName))
-                    {
-                        invalidRegistry = true;
-                        throw new IllegalStateException("Unable to find registry with key " + registryName + " for mod \"" + modid + "\". Check the 'caused by' to see further stack.", callerStack);
-                    }
-                    registryExists = true;
-                }
-                if (pred.test(registryName))
-                    RegistryObject.this.updateReference(registryName);
-            }
-        });
+        if (!optionalRegistry) {
+            final Throwable callerStack = new Throwable("Calling Site from mod: " + modid);
+            ObjectHolderRegistry.addValidator(() -> {
+                if (!registryExists(registryName))
+                    throw new IllegalStateException("Unable to find registry with key " + registryName + " for mod \"" + modid + "\". Check the 'caused by' to see further stack.", callerStack);
+            });
+        }
+        ObjectHolderRegistry.addHandler(registryName, () -> this.updateReference(registryName));
         this.updateReference(registryName);
     }
 
