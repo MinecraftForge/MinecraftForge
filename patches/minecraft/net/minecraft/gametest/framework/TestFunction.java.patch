@@ -1,0 +1,38 @@
+--- a/net/minecraft/gametest/framework/TestFunction.java
++++ b/net/minecraft/gametest/framework/TestFunction.java
+@@ -15,6 +_,9 @@
+    private final long setupTicks;
+    private final Rotation rotation;
+ 
++   // Forge: skyAccess for barrier encasement
++   private final boolean skyAccess;
++
+    public TestFunction(String p_177801_, String p_177802_, String p_177803_, int p_177804_, long p_177805_, boolean p_177806_, Consumer<GameTestHelper> p_177807_) {
+       this(p_177801_, p_177802_, p_177803_, Rotation.NONE, p_177804_, p_177805_, p_177806_, 1, 1, p_177807_);
+    }
+@@ -23,7 +_,13 @@
+       this(p_177820_, p_177821_, p_177822_, p_177823_, p_177824_, p_177825_, p_177826_, 1, 1, p_177827_);
+    }
+ 
++   /** @deprecated Use {@linkplain #TestFunction(String, String, String, Rotation, int, long, boolean, int, int, Consumer, boolean) constrctor with skyAccess} */
++   @Deprecated
+    public TestFunction(String p_177809_, String p_177810_, String p_177811_, Rotation p_177812_, int p_177813_, long p_177814_, boolean p_177815_, int p_177816_, int p_177817_, Consumer<GameTestHelper> p_177818_) {
++      this(p_177809_, p_177810_, p_177811_, p_177812_, p_177813_, p_177814_, p_177815_, p_177816_, p_177817_, p_177818_, false);
++   }
++
++   public TestFunction(String p_177809_, String p_177810_, String p_177811_, Rotation p_177812_, int p_177813_, long p_177814_, boolean p_177815_, int p_177816_, int p_177817_, Consumer<GameTestHelper> p_177818_, boolean skyAccess) {
+       this.batchName = p_177809_;
+       this.testName = p_177810_;
+       this.structureName = p_177811_;
+@@ -34,6 +_,11 @@
+       this.maxAttempts = p_177817_;
+       this.function = p_177818_;
+       this.setupTicks = p_177814_;
++      this.skyAccess = skyAccess;
++   }
++
++   public boolean skyAccess() {
++      return this.skyAccess;
+    }
+ 
+    public void run(GameTestHelper p_128077_) {
