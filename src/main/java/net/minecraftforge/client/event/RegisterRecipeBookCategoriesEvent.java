@@ -29,7 +29,7 @@ import java.util.function.Function;
  * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
  * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  */
-public class RegisterRecipeBookCategoriesEvent extends Event implements IModBusEvent
+public final class RegisterRecipeBookCategoriesEvent extends Event implements IModBusEvent
 {
     private final Map<RecipeBookCategories, ImmutableList<RecipeBookCategories>> aggregateCategories;
     private final Map<RecipeBookType, ImmutableList<RecipeBookCategories>> typeCategories;

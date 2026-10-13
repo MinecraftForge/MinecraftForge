@@ -35,7 +35,7 @@ public class PermissionGatherEvent extends Event
      */
     public static class Handler extends PermissionGatherEvent
     {
-        private Map<ResourceLocation, IPermissionHandlerFactory> availableHandlers = new HashMap<>();
+        private final Map<ResourceLocation, IPermissionHandlerFactory> availableHandlers = new HashMap<>();
 
         public Handler()
         {

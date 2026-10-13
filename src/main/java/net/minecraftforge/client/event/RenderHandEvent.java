@@ -28,7 +28,7 @@ import org.jetbrains.annotations.ApiStatus;
  * @see RenderArmEvent
  */
 @Cancelable
-public class RenderHandEvent extends Event
+public final class RenderHandEvent extends Event
 {
     private final InteractionHand hand;
     private final PoseStack poseStack;

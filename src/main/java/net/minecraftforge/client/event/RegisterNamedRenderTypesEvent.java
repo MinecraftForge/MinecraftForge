@@ -28,7 +28,7 @@ import java.util.Map;
  * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
  * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  */
-public class RegisterNamedRenderTypesEvent extends Event implements IModBusEvent
+public final class RegisterNamedRenderTypesEvent extends Event implements IModBusEvent
 {
     private final Map<ResourceLocation, RenderTypeGroup> renderTypes;
 

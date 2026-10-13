@@ -23,7 +23,7 @@ import org.jetbrains.annotations.ApiStatus;
  * @see Pre
  * @see Post
  */
-public abstract class RenderGuiOverlayEvent extends Event
+public abstract sealed class RenderGuiOverlayEvent extends Event
 {
     private final Window window;
     private final GuiGraphics guiGraphics;
@@ -72,7 +72,7 @@ public abstract class RenderGuiOverlayEvent extends Event
      * @see Post
      */
     @Cancelable
-    public static class Pre extends RenderGuiOverlayEvent
+    public static final class Pre extends RenderGuiOverlayEvent
     {
         @ApiStatus.Internal
         public Pre(Window window, GuiGraphics guiGraphics, float partialTick, NamedGuiOverlay overlay)
@@ -89,7 +89,7 @@ public abstract class RenderGuiOverlayEvent extends Event
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class Post extends RenderGuiOverlayEvent
+    public static final class Post extends RenderGuiOverlayEvent
     {
         @ApiStatus.Internal
         public Post(Window window, GuiGraphics guiGraphics, float partialTick, NamedGuiOverlay overlay)
