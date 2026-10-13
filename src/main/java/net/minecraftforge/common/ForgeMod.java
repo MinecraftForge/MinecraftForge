@@ -129,7 +129,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Mod("forge")
-public class ForgeMod
+public final class ForgeMod
 {
     public static final String VERSION_CHECK_CAT = "version_checking";
     private static final Logger LOGGER = LogManager.getLogger();

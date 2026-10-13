@@ -86,9 +86,9 @@ public class ModSorter
         infos.keySet().forEach(graph::addNode);
         modFiles.stream()
                 .map(ModFile::getModInfos)
-                .<IModInfo>mapMulti(Iterable::forEach)
+                .flatMap(Collection::stream)
                 .map(IModInfo::getDependencies)
-                .<IModInfo.ModVersion>mapMulti(Iterable::forEach)
+                .flatMap(Collection::stream)
                 .forEach(dep -> addDependency(graph, dep));
 
         final List<ModFileInfo> sorted;
@@ -104,7 +104,7 @@ public class ModSorter
                 LOGGER.error(LOADING, "Mod Sorting failed.\nDetected Cycles: {}\n", cycles);
             }
             var dataList = cycles.stream()
-                    .<ModFileInfo>mapMulti(Iterable::forEach)
+                    .flatMap(Collection::stream)
                     .<IModInfo>mapMulti((mf,c)->mf.getMods().forEach(c))
                     .map(IModInfo::getModId)
                     .map(list -> new ExceptionData("fml.modloading.cycle", list))
@@ -113,7 +113,7 @@ public class ModSorter
         }
         this.sortedList = sorted.stream()
                 .map(ModFileInfo::getMods)
-                .<IModInfo>mapMulti(Iterable::forEach)
+                .flatMap(Collection::stream)
                 .map(ModInfo.class::cast)
                 .collect(toList());
         this.modFiles = sorted.stream()
@@ -187,16 +187,16 @@ public class ModSorter
     {
         final var modVersions = modFiles.stream()
                 .map(ModFile::getModInfos)
-                .<IModInfo>mapMulti(Iterable::forEach)
+                .flatMap(Collection::stream)
                 .collect(toMap(IModInfo::getModId, IModInfo::getVersion));
 
         final var modVersionDependencies = modFiles.stream()
                 .map(ModFile::getModInfos)
-                .<IModInfo>mapMulti(Iterable::forEach)
+                .flatMap(Collection::stream)
                 .collect(groupingBy(Function.identity(), flatMapping(e -> e.getDependencies().stream(), toList())));
 
         final var modRequirements = modVersionDependencies.values().stream()
-                .<IModInfo.ModVersion>mapMulti(Iterable::forEach)
+                .flatMap(Collection::stream)
                 .filter(mv -> mv.getSide().isCorrectSide())
                 .collect(toSet());
 
@@ -251,9 +251,13 @@ public class ModSorter
         );
     }
 
-    private boolean modVersionNotContained(final IModInfo.ModVersion mv, final Map<String, ArtifactVersion> modVersions)
-    {
-        return !(VersionSupportMatrix.testVersionSupportMatrix(mv.getVersionRange(), mv.getModId(), "mod", (modId, range) -> modVersions.containsKey(modId) &&
-                (range.containsVersion(modVersions.get(modId)) || modVersions.get(modId).toString().equals("0.0NONE"))));
+    private boolean modVersionNotContained(final IModInfo.ModVersion mv, final Map<String, ArtifactVersion> modVersions) {
+        var range = mv.getVersionRange();
+        var modId = mv.getModId();
+
+        if (modVersions.containsKey(modId) && (range.containsVersion(modVersions.get(modId)) || modVersions.get(modId).toString().equals("0.0NONE")))
+            return false;
+
+        return !VersionSupportMatrix.testVersionSupportMatrix(range, modId, "mod");
     }
 }
