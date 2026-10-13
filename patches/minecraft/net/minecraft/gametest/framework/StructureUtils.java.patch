@@ -1,0 +1,27 @@
+--- a/net/minecraft/gametest/framework/StructureUtils.java
++++ b/net/minecraft/gametest/framework/StructureUtils.java
+@@ -109,7 +_,8 @@
+             .getSize();
+         BoundingBox boundingbox = getStructureBoundingBox(p_311042_, vec3i, p_310584_);
+         BlockPos blockpos;
+-        if (p_310584_ == Rotation.NONE) {
++        // Forge: The control blocks are always in the North West Corner
++        if (true || p_310584_ == Rotation.NONE) {
+             blockpos = p_311042_;
+         } else if (p_310584_ == Rotation.CLOCKWISE_90) {
+             blockpos = p_311042_.offset(vec3i.getZ() - 1, 0, 0);
+@@ -125,7 +_,13 @@
+ 
+         forceLoadChunks(boundingbox, p_312330_);
+         clearSpaceForStructure(boundingbox, p_312330_);
+-        return createStructureBlock(p_311701_, blockpos.below(), p_310584_, p_312330_);
++        var entity = createStructureBlock(p_311701_, blockpos.below(), p_310584_, p_312330_);
++        //Forge:  We need to offset the structure so that it will load within bounds.
++        if (p_310584_ != Rotation.NONE) {
++            var rotated = StructureTemplate.getZeroPositionWithTransform(BlockPos.ZERO, Mirror.NONE, p_310584_, entity.getStructureSize().getX(), entity.getStructureSize().getZ());
++            entity.setStructurePos(rotated.offset(new BlockPos(0, 1, 0)));
++        }
++        return entity;
+     }
+ 
+     public static void encaseStructure(AABB p_330422_, ServerLevel p_331249_, boolean p_328180_) {

@@ -1,0 +1,37 @@
+--- a/net/minecraft/gametest/framework/GameTestInfo.java
++++ b/net/minecraft/gametest/framework/GameTestInfo.java
+@@ -261,7 +_,7 @@
+         BlockPos blockpos = this.getOrCalculateNorthwestCorner();
+         this.structureBlockEntity = StructureUtils.prepareTestStructure(this, blockpos, this.getRotation(), this.level);
+         this.structureBlockPos = this.structureBlockEntity.getBlockPos();
+-        StructureUtils.addCommandBlockAndButtonToStartTest(this.structureBlockPos, new BlockPos(1, 0, -1), this.getRotation(), this.level);
++        StructureUtils.addCommandBlockAndButtonToStartTest(this.structureBlockPos, new BlockPos(1, 0, -1), Rotation.NONE, this.level); // Forge: The control blocks are always in the North West Corner
+         StructureUtils.encaseStructure(this.getStructureBounds(), this.level, !this.testFunction.skyAccess());
+         this.listeners.forEach(p_127630_ -> p_127630_.testStructureLoaded(this));
+         return this;
+@@ -345,5 +_,25 @@
+ 
+     public void setNorthWestCorner(BlockPos p_328918_) {
+         this.northWestCorner = p_328918_;
++    }
++
++
++    // FORGE START
++
++    private final boolean useTestOrigin = net.minecraftforge.common.ForgeConfig.COMMON.fixGameTestBlockPosAsserts.get();
++
++    /**
++     * Forge: Gets the origin of the test structure based on the
++     * {@linkplain #getStructureBlockEntity() structure block entity}.
++     * <p>
++     * This is a backported method from 1.21.3 to fix how block positions are asserted.
++     *
++     * @return The origin of the test structure
++     *
++     * @see net.minecraftforge.common.ForgeConfig.Common#fixGameTestBlockPosAsserts
++     */
++    @SuppressWarnings("DataFlowIssue") // Nullability moment
++    public BlockPos getTestOrigin() {
++        return this.useTestOrigin ? StructureUtils.getStructureOrigin(this.getStructureBlockEntity()) : this.getStructureBlockPos();
+     }
+ }
