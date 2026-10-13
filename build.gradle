@@ -22,7 +22,7 @@ ext {
 }
 
 changelog {
-    from '47.999'
+    from '51.0' // Since 1.21
 }
 
 tasks.register('setup') {
