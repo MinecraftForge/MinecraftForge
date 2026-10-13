@@ -7,7 +7,6 @@ package net.minecraftforge.registries;
 
 import java.lang.annotation.ElementType;
 import java.lang.reflect.Field;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -121,48 +120,59 @@ public class ObjectHolderRegistry
     public static void findObjectHolders()
     {
         LOGGER.debug(ForgeRegistry.REGISTRIES,"Processing ObjectHolder annotations");
-        final List<ModFileScanData.AnnotationData> annotations = ModList.get().getAllScanData().stream()
-            .map(ModFileScanData::getAnnotations)
-            .flatMap(Collection::stream)
-            .filter(a -> OBJECT_HOLDER.equals(a.annotationType()) || MOD.equals(a.annotationType()))
-            .toList();
+        final HashMap<Type, String> classModIds = new HashMap<>();
+        final List<ModFileScanData.AnnotationData> annotations = new ArrayList<>();
 
-        if (annotations.stream().noneMatch(a -> OBJECT_HOLDER.equals(a.annotationType())))
-             return; // No object holders found, skip the rest of the processing
+        for (var data : ModList.get().getAllScanData()) {
+            for (var annotation : data.getAnnotations()) {
+                if (OBJECT_HOLDER.equals(annotation.annotationType())) {
+                    annotations.add(annotation);
+                }
+                // Gather all @Mod classes so that @ObjectHolder's in those classes don't need to specify the mod id; modder convenience
+                else if (MOD.equals(annotation.annotationType())) {
+                    classModIds.put(annotation.clazz(), (String)annotation.annotationData().get("value"));
+                }
+            }
+        }
 
-        Map<Type, String> classModIds = Maps.newHashMap();
+        // this is never actually true as we have an annotation in ConditionalRecipe, but also we want to always run the vanilla holders
+        /*
+        if (annotations.isEmpty()) {
+             return; // No object holders found, skip the rest of the processing,
+        }
+        */
+
         Map<Type, Class<?>> classCache = Maps.newHashMap();
 
-        // Gather all @Mod classes so that @ObjectHolder's in those classes don't need to specify the mod id; modder convenience
-        annotations.stream()
-                .filter(a -> MOD.equals(a.annotationType()))
-                .forEach(data -> classModIds.put(data.clazz(), (String)data.annotationData().get("value")));
-
         // Validate all the vanilla class-level object holders then scan those first
-        VANILLA_OBJECT_HOLDERS.forEach(data -> {
-            try
-            {
+        for (var data : VANILLA_OBJECT_HOLDERS) {
+            try {
                 Class<?> holderClass = Class.forName(data.holderClass(), true, ObjectHolderRegistry.class.getClassLoader());
                 Class<?> registryClass = Class.forName(data.registryType(), true, ObjectHolderRegistry.class.getClassLoader());
 
                 Type holderType = Type.getType(holderClass);
                 classCache.put(holderType, holderClass);
                 scanTarget(classModIds, classCache, holderType, null, registryClass, data.registryName(), "minecraft", true, true);
-            }
-            catch (ClassNotFoundException e)
-            {
+            } catch (ClassNotFoundException e) {
                 throw new RuntimeException("Vanilla class not found, should not be possible", e);
             }
-        });
+        }
 
         // Scan actual fields annotated with @ObjectHolder second
-        annotations.stream()
-                .filter(a -> OBJECT_HOLDER.equals(a.annotationType())).filter(a -> a.targetType() == ElementType.FIELD)
-                .forEach(data -> scanTarget(classModIds, classCache, data.clazz(),
-                        data.memberName(), null, (String)data.annotationData().get("registryName"),
-                        (String)data.annotationData().get("value"), false, false));
+        for (var data : annotations) {
+            if (data.targetType() == ElementType.FIELD) {
+                var registry = (String)data.annotationData().get("registryName");
+                var name = (String)data.annotationData().get("value");
+                scanTarget(classModIds, classCache, data.clazz(), data.memberName(), null, registry, name, false, false);
+            }
+            // This is where we WOULD scan for class targets, but Shrimp broke that in 1.19 and so I don't want to re-add a feature that apparently nobody used.
+        }
 
-        LOGGER.debug(ForgeRegistry.REGISTRIES,"Found {} ObjectHolder annotations", objectHolders.size());
+        int count = objectHolders.size();
+        for (var set : namedHandlers.values())
+            count += set.size();
+
+        LOGGER.debug(ForgeRegistry.REGISTRIES, "Found {} ObjectHolder annotations", count);
     }
 
     private static void scanTarget(Map<Type, String> classModIds, Map<Type, Class<?>> classCache, Type type,
@@ -258,13 +268,8 @@ public class ObjectHolderRegistry
                 apply(handlers, exceptions);
 
             // Call legacy for backward compatibility
-            for (var handler : objectHolders) {
-                try {
-                    handler.accept(ALWAYS_TRUE);
-                } catch (Exception e) {
-                    exceptions.add(e);
-                }
-            }
+            if (!objectHolders.isEmpty())
+                apply(ALWAYS_TRUE, objectHolders, exceptions);
 
             throwIfNeeded(exceptions);
             LOGGER.debug(ForgeRegistry.REGISTRIES, "Holder lookups applied");
@@ -291,13 +296,9 @@ public class ObjectHolderRegistry
         }
 
         // Call legacy
-        for (Consumer<Predicate<ResourceLocation>> objectHolder : objectHolders) {
-            try {
-                objectHolder.accept(filter);
-            } catch (Exception e) {
-                exceptions.add(e);
-            }
-        }
+        if (!objectHolders.isEmpty())
+            apply(filter, objectHolders, exceptions);
+
         throwIfNeeded(exceptions);
         LOGGER.debug(ForgeRegistry.REGISTRIES, "Holder lookups applied");
     }
@@ -306,9 +307,14 @@ public class ObjectHolderRegistry
     public static void applyObjectHolders(ResourceLocation registry) {
         var exceptions = new ArrayList<Exception>();
         validate(exceptions);
+
         var handlers = namedHandlers.get(registry);
         if (handlers != null)
             apply(handlers, exceptions);
+
+        if (!objectHolders.isEmpty())
+            apply(registry::equals, objectHolders, exceptions);
+
         throwIfNeeded(exceptions);
     }
 
@@ -335,6 +341,16 @@ public class ObjectHolderRegistry
         for (var handler : handlers) {
             try {
                 handler.run();
+            } catch (Exception e) {
+                exceptions.add(e);
+            }
+        }
+    }
+
+    private static void apply(Predicate<ResourceLocation> filter, Set<Consumer<Predicate<ResourceLocation>>> handlers, List<Exception> exceptions) {
+        for (var handler : handlers) {
+            try {
+                handler.accept(filter);
             } catch (Exception e) {
                 exceptions.add(e);
             }
