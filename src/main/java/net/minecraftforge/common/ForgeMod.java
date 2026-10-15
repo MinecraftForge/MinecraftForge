@@ -14,6 +14,7 @@ import net.minecraft.commands.synchronization.SingletonArgumentInfo;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
+import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.metadata.PackMetadataGenerator;
@@ -63,6 +64,7 @@ import net.minecraftforge.common.world.NoneStructureModifier;
 import net.minecraftforge.common.world.StructureModifier;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.ForgeFlowingFluid;
 import net.minecraftforge.fml.*;
@@ -343,6 +345,14 @@ public class ForgeMod {
         INGREDIENT_SERIALIZERS.register("difference", () -> DifferenceIngredient.SERIALIZER);
         INGREDIENT_SERIALIZERS.register("intersection", () -> IntersectionIngredient.SERIALIZER);
     }
+
+    private static final DeferredRegister<DataComponentType<?>> DATA_COMPONENTS = deferred(Registries.DATA_COMPONENT_TYPE);
+    public static final RegistryObject<DataComponentType<FluidStack>> FLUID_STACK_DATA = DATA_COMPONENTS.register("fluidstack", () ->
+        DataComponentType.<FluidStack>builder()
+            .persistent(FluidStack.CODEC)
+            .networkSynchronized(FluidStack.STREAM_CODEC)
+            .build()
+    );
 
 
     private static boolean enableMilkFluid = false;
