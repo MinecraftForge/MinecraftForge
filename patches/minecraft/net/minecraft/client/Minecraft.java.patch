@@ -9,6 +9,15 @@
      static Minecraft instance;
      private static final Logger LOGGER = LogUtils.getLogger();
      public static final boolean ON_OSX = Util.getPlatform() == Util.OS.OSX;
+@@ -348,7 +_,7 @@
+     @Nullable
+     private IntegratedServer singleplayerServer;
+     @Nullable
+-    private Connection pendingConnection;
++    public Connection pendingConnection;
+     private boolean isLocalServer;
+     @Nullable
+     public Entity cameraEntity;
 @@ -438,7 +_,6 @@
              }
          }, Util.nonCriticalIoPool());

@@ -1,7 +1,14 @@
 --- a/net/minecraft/stats/RecipeBookSettings.java
 +++ b/net/minecraft/stats/RecipeBookSettings.java
-@@ -11,7 +_,7 @@
+@@ -6,12 +_,14 @@
+ import java.util.EnumMap;
+ import java.util.Map;
+ import net.minecraft.Util;
++import net.minecraft.client.Minecraft;
+ import net.minecraft.nbt.CompoundTag;
+ import net.minecraft.network.FriendlyByteBuf;
  import net.minecraft.world.inventory.RecipeBookType;
++import net.minecraftforge.network.ConnectionType;
  
  public final class RecipeBookSettings {
 -    private static final Map<RecipeBookType, Pair<String, String>> TAG_FIELDS = ImmutableMap.of(
@@ -18,6 +25,29 @@
      private final Map<RecipeBookType, RecipeBookSettings.TypeSettings> states;
  
      private RecipeBookSettings(Map<RecipeBookType, RecipeBookSettings.TypeSettings> p_12730_) {
+@@ -53,8 +_,14 @@
+ 
+     public static RecipeBookSettings read(FriendlyByteBuf p_12753_) {
+         Map<RecipeBookType, RecipeBookSettings.TypeSettings> map = Maps.newEnumMap(RecipeBookType.class);
++        var connection = Minecraft.getInstance().getConnection() == null ? Minecraft.getInstance().pendingConnection : Minecraft.getInstance().getConnection().getConnection();
++        var connectionType = connection == null ? ConnectionType.VANILLA : net.minecraftforge.network.NetworkContext.get(connection).getType();
+ 
+         for (RecipeBookType recipebooktype : RecipeBookType.values()) {
++            if (connectionType == ConnectionType.VANILLA && recipebooktype.isModded()) {
++                continue;
++            }
++
+             boolean flag = p_12753_.readBoolean();
+             boolean flag1 = p_12753_.readBoolean();
+             map.put(recipebooktype, new RecipeBookSettings.TypeSettings(flag, flag1));
+@@ -110,6 +_,7 @@
+ 
+         for (RecipeBookType recipebooktype : RecipeBookType.values()) {
+             RecipeBookSettings.TypeSettings recipebooksettings$typesettings = p_12733_.states.get(recipebooktype);
++            if (recipebooksettings$typesettings == null) continue;
+             this.states.put(recipebooktype, recipebooksettings$typesettings.copy());
+         }
+     }
 @@ -158,5 +_,10 @@
          public String toString() {
              return "[open=" + this.open + ", filtering=" + this.filtering + "]";
