@@ -9,18 +9,15 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemDisplayContext;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.ChunkRenderTypeSet;
-import net.minecraftforge.client.RenderTypeHelper;
 import net.minecraftforge.client.model.data.ModelData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -53,7 +50,7 @@ public interface IForgeBakedModel {
     }
 
     /**
-     * Applies a transform for the given {@link ItemTransforms.TransformType} and {@code applyLeftHandTransform}, and
+     * Applies a transform for the given {@link ItemDisplayContext} and {@code applyLeftHandTransform}, and
      * returns the model to be rendered.
      */
     default BakedModel applyTransform(ItemDisplayContext transformType, PoseStack poseStack, boolean applyLeftHandTransform) {
@@ -78,34 +75,4 @@ public interface IForgeBakedModel {
     default ChunkRenderTypeSet getRenderTypes(@NotNull BlockState state, @NotNull RandomSource rand, @NotNull ModelData data) {
         return ItemBlockRenderTypes.getRenderLayers(state);
     }
-
-    /**
-     * Gets an ordered list of {@link RenderType render types} to use when drawing this item.
-     * All render types using the {@link com.mojang.blaze3d.vertex.DefaultVertexFormat#NEW_ENTITY} format are supported.
-     * <p>
-     * This method will only be called on the models returned by {@link #getRenderPasses(ItemStack, boolean)}.
-     * <p>
-     * By default, defers query to {@link ItemBlockRenderTypes}.
-     *
-     * @see #getRenderPasses(ItemStack, boolean)
-     */
-    /*
-    default List<RenderType> getRenderTypes(ItemStack itemStack, boolean fabulous) {
-        return List.of(RenderTypeHelper.getFallbackItemRenderType(itemStack, self()));
-    }
-    */
-
-    /**
-     * Gets an ordered list of baked models used to render this model as an item.
-     * Each of those models' render types will be queried via {@link #getRenderTypes(ItemStack, boolean)}.
-     * <p>
-     * By default, returns the model itself.
-     *
-     * @see #getRenderTypes(ItemStack, boolean)
-     */
-    /*
-    default List<BakedModel> getRenderPasses(ItemStack itemStack, boolean fabulous) {
-        return List.of(self());
-    }
-    */
 }

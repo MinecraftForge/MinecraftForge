@@ -48,7 +48,7 @@ public final class RenderTypeHelper {
     /**
      * Provides a fallback {@link RenderType} for the given {@link ItemStack} in the case that none is explicitly specified.
      * <p>
-     * Mimics the behavior of vanilla's {@link ItemBlockRenderTypes#getRenderType(ItemStack, boolean)}
+     * Mimics the behavior of vanilla's {@link ItemBlockRenderTypes#getRenderType(ItemStack)}
      * but removes the need to query the model again if the item is a {@link BlockItem}.
      */
     @NotNull
