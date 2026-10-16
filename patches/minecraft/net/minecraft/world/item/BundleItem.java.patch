@@ -4,7 +4,7 @@
      public boolean overrideOtherStackedOnMe(
          final ItemStack self, final ItemStack other, final Slot slot, final ClickAction clickAction, final Player player, final SlotAccess carriedItem
      ) {
-+        if (other.getCount() != 1) return false;
++        if (self.getCount() != 1) return false; // Forge: prevent insertions when we're stacked, which would cause duplication when unstacked+
          if (clickAction == ClickAction.PRIMARY && other.isEmpty()) {
              toggleSelectedItem(self, -1);
              return false;
