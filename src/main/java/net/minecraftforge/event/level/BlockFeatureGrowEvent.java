@@ -27,7 +27,12 @@ import org.jetbrains.annotations.Nullable;
  * {@linkplain Result#DENY DENY} will prevent the sapling from growing.
  * <p>
  * This event is fired only on the {@linkplain net.minecraftforge.fml.LogicalSide#SERVER logical server}.
+ *
+ * @deprecated This event is scheduled for removal in 26.4 due to a lack of adoption by mods, in order to ease porting.
+ *             Please reach out to the Forge team if you are relying on this and would like to see it remain in Forge.
+ *             We may keep it or add it back in a future version if there is enough demand.
  */
+@Deprecated(forRemoval = true, since = "26.4")
 public final class BlockFeatureGrowEvent implements LevelEvent, HasResult {
     public static final EventBus<BlockFeatureGrowEvent> BUS = EventBus.create(BlockFeatureGrowEvent.class);
 

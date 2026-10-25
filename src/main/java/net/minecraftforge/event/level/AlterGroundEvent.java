@@ -22,7 +22,12 @@ import org.jetbrains.annotations.ApiStatus;
  * This event is not {@linkplain Cancellable cancellable}.
  * <p>
  * This event is fired only on the {@linkplain net.minecraftforge.fml.LogicalSide#SERVER logical server}.
+ *
+ * @deprecated This event is scheduled for removal in 26.4 due to a lack of adoption by mods, in order to ease porting.
+ *             Please reach out to the Forge team if you are relying on this and would like to see it remain in Forge.
+ *             We may keep it or add it back in a future version if there is enough demand.
  */
+@Deprecated(forRemoval = true, since = "26.4")
 public final class AlterGroundEvent extends MutableEvent {
     public static final EventBus<AlterGroundEvent> BUS = EventBus.create(AlterGroundEvent.class);
 
