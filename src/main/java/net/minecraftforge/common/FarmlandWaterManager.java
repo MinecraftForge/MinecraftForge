@@ -25,6 +25,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
+/// @deprecated This class is scheduled for removal in 26.4 due to a lack of adoption by mods, in order to ease porting.
+///             Please reach out to the Forge team if you are relying on this and would like to see it remain in Forge.
+///             We may keep it or add it back in a future version if there is enough demand.
+@Deprecated(forRemoval = true, since = "26.4")
 public class FarmlandWaterManager {
     private static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("forge.debugFarmlandWaterManager", "false"));
     private static final Map<LevelReader, Map<ChunkPos, ChunkTicketManager<Vec3>>> customWaterHandler = new WeakHashMap<>();
