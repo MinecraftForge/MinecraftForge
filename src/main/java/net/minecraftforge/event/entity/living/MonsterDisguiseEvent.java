@@ -7,14 +7,14 @@ package net.minecraftforge.event.entity.living;
 
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.common.extensions.IForgeItem;
+import net.minecraftforge.common.extensions.IForgeItemStack;
 import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
 import net.minecraftforge.eventbus.api.event.RecordEvent;
 import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 
 /**
  * This event is fired on the forge bus before an Monster detects that a player is looking at them.
- * It will not be fired if the detection is already prevented by {@link IForgeItem#isEnderMask}
+ * It will not be fired if the detection is already prevented by {@link IForgeItemStack#isMonsterDisguise(Player, Monster)}
  * <p>
  * This event is {@linkplain Cancellable cancellable}.
  * If this event is cancelled, the Monster will not target the player.

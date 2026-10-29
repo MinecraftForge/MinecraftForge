@@ -42,6 +42,7 @@ import org.jspecify.annotations.Nullable;
  * </ul>
  * Of course, nothing egregious will happen should a modder choose to use them for their own purposes.<br>
  */
+@Deprecated(forRemoval = true, since = "26.4")
 public class BrainBuilder<E extends LivingEntity> {
     private final Collection<MemoryModuleType<?>> memoryTypes = new HashSet<>();
     private final Collection<SensorType<? extends Sensor<? super E>>> sensorTypes = new HashSet<>();
