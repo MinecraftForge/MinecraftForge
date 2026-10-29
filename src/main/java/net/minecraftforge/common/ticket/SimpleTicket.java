@@ -14,7 +14,12 @@ import java.util.function.Consumer;
 /**
  * Common class for a simple ticket based system.
  * @param <T> The type that will be used to check if your ticket matches
+ *
+ * @deprecated This class is scheduled for removal in 26.4 due to a lack of adoption by mods, in order to ease porting.
+ *             Please reach out to the Forge team if you are relying on this and would like to see it remain in Forge.
+ *             We may keep it or add it back in a future version if there is enough demand.
  */
+@Deprecated(forRemoval = true, since = "26.4")
 public abstract class SimpleTicket<T>
 {
     @Nullable
