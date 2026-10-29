@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/item/consume_effects/TeleportRandomlyConsumeEffect.java
++++ b/net/minecraft/world/item/consume_effects/TeleportRandomlyConsumeEffect.java
+@@ -63,7 +_,9 @@
+             }
+ 
+             Vec3 oldPos = user.position();
+-            if (user.randomTeleport(xx, yy, zz, true, BlockTags.CONSUMABLE_DOES_NOT_TELEPORT_TO)) {
++            var event = net.minecraftforge.event.ForgeEventFactory.onChorusFruitTeleport(user, xx, yy, zz);
++            if (event == null) return false;
++            if (user.randomTeleport(event.getTargetX(), event.getTargetY(), event.getTargetZ(), true, BlockTags.CONSUMABLE_DOES_NOT_TELEPORT_TO)) {
+                 level.gameEvent(GameEvent.TELEPORT, oldPos, GameEvent.Context.of(user));
+                 SoundSource soundSource;
+                 SoundEvent soundEvent;

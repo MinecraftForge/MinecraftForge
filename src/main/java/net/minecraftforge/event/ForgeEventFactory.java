@@ -705,8 +705,9 @@ public final class ForgeEventFactory {
         return EntityTeleportEvent.EnderPearl.BUS.post(event) ? null : event;
     }
 
-    public static EntityTeleportEvent.ChorusFruit onChorusFruitTeleport(LivingEntity entity, double targetX, double targetY, double targetZ) {
-        return EntityTeleportEvent.ChorusFruit.BUS.fire(new EntityTeleportEvent.ChorusFruit(entity, targetX, targetY, targetZ));
+    public static EntityTeleportEvent.@Nullable ChorusFruit onChorusFruitTeleport(LivingEntity entity, double targetX, double targetY, double targetZ) {
+        var event = new EntityTeleportEvent.ChorusFruit(entity, targetX, targetY, targetZ);
+        return EntityTeleportEvent.ChorusFruit.BUS.post(event) ? null : event;
     }
 
     public static boolean onPermissionChanged(NameAndId gameProfile, @Nullable LevelBasedPermissionSet newLevel, PlayerList playerList) {
