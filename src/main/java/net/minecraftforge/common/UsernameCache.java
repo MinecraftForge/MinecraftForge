@@ -36,9 +36,14 @@ import org.jetbrains.annotations.Nullable;
  * last known username.<br>
  * For convenience, {@link #getMap()} is provided to get an immutable copy of
  * the caches underlying map.
+ *
+ * @deprecated This class is scheduled for removal in 26.4 due to a lack of adoption by mods, in order to ease porting.
+ *             Please reach out to the Forge team if you are relying on this and would like to see it remain in Forge.
+ *             We may keep it or add it back in a future version if there is enough demand.
  */
+@Deprecated(forRemoval = true, since = "26.4")
 public final class UsernameCache {
-    private static Map<UUID, String> map = new HashMap<>();
+    private static HashMap<UUID, String> map = new HashMap<>();
 
     private static final Path saveFile = FMLLoader.getGamePath().resolve("usernamecache.json");
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();

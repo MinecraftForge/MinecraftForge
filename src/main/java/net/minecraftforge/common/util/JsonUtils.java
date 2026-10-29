@@ -29,6 +29,10 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.GsonHelper;
 import org.jetbrains.annotations.Nullable;
 
+/// @deprecated This class is scheduled for removal in 26.4 due to a lack of adoption by mods, in order to ease porting.
+///             Please reach out to the Forge team if you are relying on this and would like to see it remain in Forge.
+///             We may keep it or add it back in a future version if there is enough demand.
+@Deprecated(forRemoval = true, since = "26.4")
 public class JsonUtils {
     // http://stackoverflow.com/questions/7706772/deserializing-immutablelist-using-gson/21677349#21677349
     public enum ImmutableListTypeAdapter implements JsonDeserializer<ImmutableList<?>>, JsonSerializer<ImmutableList<?>> {
