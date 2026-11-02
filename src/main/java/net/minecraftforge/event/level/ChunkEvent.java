@@ -68,7 +68,12 @@ public sealed interface ChunkEvent extends LevelEvent
      * the ChunkAccess isLightCorrect to true.<br>
      * <br>
      * The game test for this event is lighting_event_test in net.minecraftforge.debug.chunk<br>
+     *
+     * @deprecated This event is scheduled for removal in 26.4 due to a lack of adoption by mods, in order to ease porting.
+     *             Please reach out to the Forge team if you are relying on this and would like to see it remain in Forge.
+     *             We may keep it or add it back in a future version if there is enough demand.
      */
+    @Deprecated(forRemoval = true, since = "26.4")
     record LightingCalculated(ChunkAccess getChunk) implements ChunkEvent {
         public static final EventBus<ChunkEvent.LightingCalculated> BUS = EventBus.create(ChunkEvent.LightingCalculated.class);
     }

@@ -31,8 +31,13 @@ import org.jspecify.annotations.NullMarked;
  * @param getOldTicketLevel the previous ticket level the chunk had
  * @param getNewTicketLevel the new ticket level the chunk has
  * @param getChunkHolder the chunk that had its ticket level updated, may be null
+ *
+ * @deprecated This event is scheduled for removal in 26.4 due to a lack of adoption by mods, in order to ease porting.
+ *             Please reach out to the Forge team if you are relying on this and would like to see it remain in Forge.
+ *             We may keep it or add it back in a future version if there is enough demand.
  */
 @NullMarked
+@Deprecated(forRemoval = true, since = "26.4")
 public record ChunkTicketLevelUpdatedEvent(
         ServerLevel getLevel,
         long getChunkPos,

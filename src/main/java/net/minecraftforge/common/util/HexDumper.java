@@ -7,6 +7,8 @@ package net.minecraftforge.common.util;
 
 import io.netty.buffer.ByteBuf;
 
+import java.util.Arrays;
+
 /**
  * Utility class for creating a nice human readable dump of binary data.
  *
@@ -42,7 +44,7 @@ public class HexDumper {
         return inst.finish();
     }
 
-    private static class Instance {
+    private static final class Instance {
         private static final String HEX = "0123456789ABCDEF";
         private final int marked;
         private final StringBuilder buf;
@@ -57,8 +59,7 @@ public class HexDumper {
                                         + (lines * 2)        // \t and \n per line
                                         + (marked == -1 ? 0 : lines)); // ' ' or < at the start of each line
 
-            for (int x = 0; x < ascii.length; x++)
-                ascii[x] = ' ';
+            Arrays.fill(ascii, ' ');
         }
 
         public void add(byte data) {

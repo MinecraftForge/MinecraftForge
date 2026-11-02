@@ -10,9 +10,12 @@ import com.mojang.math.Transformation;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
-/**
- * Vertex pipeline element that applies a transformation to incoming geometry.
- */
+/// Vertex pipeline element that applies a transformation to incoming geometry.
+///
+/// @deprecated This class is scheduled for removal in 26.4 due to a lack of adoption by mods, in order to ease porting.
+///             Please reach out to the Forge team if you are relying on this and would like to see it remain in Forge.
+///             We may keep it or add it back in a future version if there is enough demand.
+@Deprecated(forRemoval = true, since = "26.4")
 public class TransformingVertexPipeline extends VertexConsumerWrapper
 {
     private final Transformation transformation;
