@@ -94,7 +94,7 @@ public class ForgeConfig {
     				"A sane default is 1KB (1024), but may need to be expanded for larger modpacks.",
     				"Forge will auto-adjust this if mods register their channels using our channel manager."
 				)
-        		.translation("forge.configui.channellistlimit")
+        		.translation("forge.configgui.channellistlimit")
         		.defineInRange("channelListLimit", 1024, 1, Long.MAX_VALUE);
 
             builder.pop();
