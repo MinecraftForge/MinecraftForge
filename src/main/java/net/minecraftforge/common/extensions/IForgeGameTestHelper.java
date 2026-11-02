@@ -5,6 +5,7 @@
 
 package net.minecraftforge.common.extensions;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.UUID;
@@ -23,6 +24,8 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraftforge.eventbus.api.bus.BusGroup;
+import net.minecraftforge.unsafe.UnsafeHacks;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.authlib.GameProfile;
@@ -205,8 +208,21 @@ public interface IForgeGameTestHelper {
      * Registers an event listener that will be unregistered when the test is finished running.
      */
     default void registerEventListener(Object handler) {
-        var keys = MinecraftForge.EVENT_BUS.register(handler);
-        self().addCleanup(_ -> MinecraftForge.EVENT_BUS.unregister(keys));
+        final class JdkInternalLookup {
+            private JdkInternalLookup() {}
+            private static final MethodHandles.Lookup INSTANCE;
+            static {
+                try {
+                    var lookupField = MethodHandles.Lookup.class.getDeclaredField("IMPL_LOOKUP");
+                    UnsafeHacks.setAccessible(lookupField);
+                    INSTANCE = (MethodHandles.Lookup) lookupField.get(null);
+                } catch (NoSuchFieldException | IllegalAccessException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+        var keys = BusGroup.DEFAULT.register(JdkInternalLookup.INSTANCE, handler);
+        self().addCleanup(_ -> BusGroup.DEFAULT.unregister(keys));
     }
 
     /**

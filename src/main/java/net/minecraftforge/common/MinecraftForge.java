@@ -39,7 +39,12 @@ public class MinecraftForge {
      * <p>Events marked with {@link IModBusEvent} belong on the
      * {@linkplain FMLJavaModLoadingContext#getModBusGroup() mod BusGroup} and not on the
      * {@linkplain BusGroup#DEFAULT default BusGroup}.</p>
+     *
+     * @deprecated This was intended as a temporary solution to help modders migrate to the new event system.
+     *             It relies on JDK internals that may break without notice and will be removed in 26.4.
+     *             Replace `MinecraftForge.EVENT_BUS.register(...)` with `BusGroup.DEFAULT.register(MethodHandles.lookup(), ...)`.
      */
+    @Deprecated(forRemoval = true, since = "26.4")
     public static final EventBusMigrationHelper EVENT_BUS = EventBusMigrationHelper.INSTANCE;
 
     private static final Logger LOGGER = LogManager.getLogger();

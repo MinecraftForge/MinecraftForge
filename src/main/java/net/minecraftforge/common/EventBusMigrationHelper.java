@@ -14,19 +14,21 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodHandles.Lookup;
 import java.util.Collection;
 
-/**
- * A small helper class to aid Forge modders in migrating from EventBus 6 to the new EventBus 7.
- * <p>
- * Refer to the <a href="https://gist.github.com/PaintNinja/ad82c224aecee25efac1ea3e2cf19b91">migration guide</a>
- * mentioned in the <a href="https://files.minecraftforge.net">Forge 1.21.6 changelog</a> or
- * <a href="https://forums.minecraftforge.net/topic/159525-forge-581-minecraft-1218/">1.21.8 announcement</a> on the
- * forums, or ask in <a href="https://discord.minecraftforge.net">the Forge Discord</a> for help with migrating your mod
- * to the new system.
- * </p>
- * <p>
- * You can also check the updated example code in <a href="https://files.minecraftforge.net">the MDK</a> for the MC
- * version you're using.
- */
+/// A small helper class to aid Forge modders in migrating from EventBus 6 to the new EventBus 7.
+///
+/// Refer to the [migration guide](https://gist.github.com/PaintNinja/ad82c224aecee25efac1ea3e2cf19b91)
+/// mentioned in the [Forge 1.21.6 changelog](https://files.minecraftforge.net) or
+/// [1.21.8 announcement](https://forums.minecraftforge.net/topic/159525-forge-581-minecraft-1218/) on the
+/// forums, or ask in [the Forge Discord](https://discord.minecraftforge.net) for help with migrating your mod
+/// to the new system.
+///
+/// You can also check the updated example code in [the MDK](https://files.minecraftforge.net) for the MC
+/// version you're using.
+///
+/// @deprecated This was intended as a temporary solution to help modders migrate to the new event system. It relies on
+///             JDK internals that may break without notice and will be removed in 26.4.
+///             Replace `MinecraftForge.EVENT_BUS.register(...)` with `BusGroup.DEFAULT.register(MethodHandles.lookup(), ...)`.
+@Deprecated(forRemoval = true, since = "26.4")
 public final class EventBusMigrationHelper {
     public static final EventBusMigrationHelper INSTANCE = new EventBusMigrationHelper(BusGroup.DEFAULT);
 
