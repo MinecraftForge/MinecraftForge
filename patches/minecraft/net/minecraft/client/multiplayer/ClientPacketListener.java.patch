@@ -1,5 +1,14 @@
 --- a/net/minecraft/client/multiplayer/ClientPacketListener.java
 +++ b/net/minecraft/client/multiplayer/ClientPacketListener.java
+@@ -306,6 +_,8 @@
+ import net.minecraft.world.scores.criteria.ObjectiveCriteria;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import net.minecraftforge.network.ConnectionType;
++import net.minecraftforge.network.NetworkContext;
+ import org.slf4j.Logger;
+ 
+ @OnlyIn(Dist.CLIENT)
 @@ -425,6 +_,7 @@
  
          this.minecraft.debugRenderer.clear();
@@ -8,6 +17,14 @@
          this.minecraft.player.setId(p_105030_.playerId());
          this.level.addEntity(this.minecraft.player);
          this.minecraft.player.input = new KeyboardInput(this.minecraft.options);
+@@ -806,6 +_,7 @@
+ 
+     @Override
+     public void handleConfigurationStart(ClientboundStartConfigurationPacket p_298839_) {
++        NetworkContext.get(this.connection).setConnectionType(ConnectionType.VANILLA);
+         PacketUtils.ensureRunningOnSameThread(p_298839_, this, this.minecraft);
+         this.minecraft.getChatListener().clearQueue();
+         this.sendChatAcknowledgement();
 @@ -1159,7 +_,9 @@
              localplayer1.getAttributes().assignValues(localplayer.getAttributes());
          }
