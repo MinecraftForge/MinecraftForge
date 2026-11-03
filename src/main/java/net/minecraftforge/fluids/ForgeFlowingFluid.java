@@ -103,7 +103,7 @@ public abstract class ForgeFlowingFluid extends FlowingFluid {
 
     @Override
     protected boolean canBeReplacedWith(FluidState state, BlockGetter level, BlockPos pos, Fluid fluidIn, Direction direction) {
-        // Based on the water implementation, may need to be overriden for mod fluids that shouldn't behave like water.
+        // Based on the water implementation, may need to be overridden for mod fluids that shouldn't behave like water.
         return direction == Direction.DOWN && !isSame(fluidIn);
     }
 

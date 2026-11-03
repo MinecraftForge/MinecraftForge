@@ -120,7 +120,7 @@ abstract class CommonDevLaunchHandler extends CommonLaunchHandler {
         return Paths.get(ret);
     }
 
-    // TODO: [Forge][UFS][DEV] Make Forge and MC seperate sources at dev time so we don't have to filter
+    // TODO: [Forge][UFS][DEV] Make Forge and MC separate sources at dev time so we don't have to filter
     protected static Path getMinecraftOnly(Path extra, Path forge) {
         var packages = getPackages(); // Pulled out so it is passed to the lambda as value
         var extraPath = extra.toString().replace('\\', '/');
@@ -137,7 +137,7 @@ abstract class CommonDevLaunchHandler extends CommonLaunchHandler {
         return fs.getRootDirectories().iterator().next();
     }
 
-    // TODO: [Forge][UFS][DEV] Make Forge and MC seperate sources at dev time so we don't have to filter
+    // TODO: [Forge][UFS][DEV] Make Forge and MC separate sources at dev time so we don't have to filter
     protected static Path getForgeOnly(Path forge) {
         var packages = getPackages(); // Pulled out so it is passed to the lambda as value
         // We need to separate out our resources/code so that we can show up as a different data pack.

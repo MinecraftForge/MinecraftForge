@@ -36,7 +36,7 @@ public record ForgeFaceData(boolean ambientOcclusion, boolean calculateNormals) 
      * Parses a ForgeFaceData from JSON
      * @param obj The JsonObject to parse from, weakly-typed to JsonElement to reduce logic complexity.
      * @param fallback What to return if the first parameter is null.
-     * @return The parsed ForgeFaceData, or the fallback parameter if the first parmeter is null.
+     * @return The parsed ForgeFaceData, or the fallback parameter if the first parameter is null.
      * @throws JsonParseException
      */
     @Nullable

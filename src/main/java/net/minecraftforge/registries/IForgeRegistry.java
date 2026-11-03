@@ -86,8 +86,7 @@ public interface IForgeRegistry<V> extends Iterable<V> {
     /**
      * Retrieve the slave map of type T from the registry.
      * Slave maps are maps which are dependent on registry content in some way.
-     * @param slaveMapName The name of the slavemap
-     * @param type The type
+     * @param key The key of the slavemap
      * @param <T> Type to return
      * @return The slavemap if present
      */
