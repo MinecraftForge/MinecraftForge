@@ -150,6 +150,10 @@
   "forge.configgui.removeErroringBlockEntities": "Remove Erroring Block Entities",
   "forge.configgui.fullBoundingBoxLadders.tooltip": "Set this to true to check the entire entity's collision bounding box for ladders instead of just the block they are in. Causes noticeable differences in mechanics so default is vanilla behavior. Default: false.",
   "forge.configgui.fullBoundingBoxLadders": "Full Bounding Box Ladders",
+  "forge.configgui.permissionHandler.tooltip": "The permission handler used by the server. Defaults to forge:default_handler if no such handler with that name is registered.",
+  "forge.configgui.permissionHandler": "Permission Handler",
+  "forge.configgui.advertiseDedicatedServerToLan.tooltip": "Set this to true to enable advertising the dedicated server to local LAN clients so that it shows up in the Multiplayer screen automatically.",
+  "forge.configgui.advertiseDedicatedServerToLan": "Advertise Dedicated Server to LAN",
   "forge.configgui.zombieBaseSummonChance.tooltip": "Base zombie summoning spawn chance. Allows changing the bonus zombie summoning mechanic.",
   "forge.configgui.zombieBaseSummonChance": "Zombie Summon Chance",
   "forge.configgui.zombieBabyChance.tooltip": "Chance that a zombie (or subclass) is a baby. Allows changing the zombie spawning mechanic.",
@@ -202,6 +206,8 @@
 
   "forge.configgui.channellistlimit": "Channel List Size Limit",
   "forge.configgui.channellistlimit.tooltip": "Maximum size to use to store the channel list for a network connection. Some malicious actors may use this to use up all your memory. A sane default is 1KB (1024), but may need to be expanded for larger modpacks.",
+  "forge.configgui.migrationHelperMode": "Migration Helper Mode",
+  "forge.configgui.migrationHelperMode.tooltip": "A config option to help developers find known legacy modded tags that have common convention equivalents when running on integrated server. Defaults to OFF.",
   "forge.server.channellistlimit.kick": "Received too many networking channels",
 
   "forge.controlsgui.shift": "SHIFT + %s",
