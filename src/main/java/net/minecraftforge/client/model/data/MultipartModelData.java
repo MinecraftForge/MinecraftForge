@@ -12,6 +12,12 @@ import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
+/// Holds per-part {@link ModelData} for multipart block models, to be looked up with {@link #resolve(ModelData, BlockStateModelPart)}.
+///
+/// @deprecated This class is scheduled for removal in 26.4 due to a lack of adoption by mods, in order to ease porting.
+///             Please reach out to the Forge team if you are relying on this and would like to see it remain in Forge.
+///             We may keep it or add it back in a future version if there is enough demand.
+@Deprecated(forRemoval = true, since = "26.4")
 public class MultipartModelData {
     public static final ModelProperty<MultipartModelData> PROPERTY = new ModelProperty<>();
 
