@@ -39,7 +39,7 @@ public interface IForgeBaseRailBlock {
     * Return the rail's direction.
     * Can be used to make the cart think the rail is a different shape,
     * for example when making diamond junctions or switches.
-    * The cart parameter will often be null unless it it called from EntityMinecart.
+    * The cart parameter will often be null unless it is called from EntityMinecart.
     *
     * @param level The level.
     * @param pos Block's position in level

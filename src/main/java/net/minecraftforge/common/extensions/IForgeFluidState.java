@@ -160,7 +160,7 @@ public interface IForgeFluidState {
 
     /**
      * Returns the Entity specific flow velocity of this fluid.
-     * @param getter the getter which can get the fluid
+     * @param level the level which can get the fluid
      * @param pos the position of the fluid
      * @param entity The entity current being effected by this fluid
      * @return How much to move the player, this will

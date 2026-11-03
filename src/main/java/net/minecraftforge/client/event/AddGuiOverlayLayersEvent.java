@@ -13,12 +13,12 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NullMarked;
 
 /**
- * Fired when the {@linkplain ForgeLayeredDraw#VANILLA_ROOT}'s order is resolved during{@link ForgeLayeredDraw#resolveLayers().
+ * Fired when the {@linkplain ForgeLayeredDraw#VANILLA_ROOT}'s order is resolved during {@link ForgeLayeredDraw#resolveLayers()}.
  * This can be used to add additional or move gui layers and entire layer stacks as needed.
  *
  * <p>This event is fired only on the {@linkplain net.minecraftforge.fml.LogicalSide logical client}.</p>
  *
- * @param getLayedDraw The provided {@linkplain ForgeLayeredDraw#instance}. By default will be {@linkplain ForgeLayeredDraw#VANILLA_ROOT}.
+ * @param getLayeredDraw The provided {@linkplain ForgeLayeredDraw#instance}. By default will be {@linkplain ForgeLayeredDraw#VANILLA_ROOT}.
  */
 @NullMarked
 public record AddGuiOverlayLayersEvent(ForgeLayeredDraw getLayeredDraw) implements SelfDestructing, RecordEvent {

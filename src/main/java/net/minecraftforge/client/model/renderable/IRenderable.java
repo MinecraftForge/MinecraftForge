@@ -9,17 +9,16 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.util.Unit;
 
 /**
- * A standard interface for things that can be rendered to a {@link MultiBufferSource}.
+ * A standard interface for things that can be rendered to a {@link net.minecraft.client.renderer.MultiBufferSource}.
  *
  * @param <T> The type of context object used by the rendering logic
  */
 @FunctionalInterface
 public interface IRenderable<T> {
     /**
-     * Draws the renderable by adding the geometry to the provided {@link MultiBufferSource}
+     * Draws the renderable by adding the geometry to a {@link net.minecraft.client.renderer.MultiBufferSource}
      *
      * @param poseStack               The pose stack
-     * @param bufferSource            The buffer source where the vertex data should be output
      * @param textureRenderTypeLookup A function that provides a RenderType for the given texture
      * @param lightmap                The lightmap coordinates representing the current lighting conditions. See {@link net.minecraft.client.renderer.LightTexture}
      * @param overlay                 The overlay coordinates representing the current overlay status. See {@link net.minecraft.client.renderer.texture.OverlayTexture}
