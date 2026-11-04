@@ -1,15 +1,44 @@
 --- a/net/minecraft/client/renderer/block/dispatch/BlockStateModel.java
 +++ b/net/minecraft/client/renderer/block/dispatch/BlockStateModel.java
-@@ -20,9 +_,11 @@
+@@ -20,13 +_,40 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  @OnlyIn(Dist.CLIENT)
 -public interface BlockStateModel {
 +public interface BlockStateModel extends net.minecraftforge.client.extensions.IForgeBlockStateModel {
-+    /**@deprecated Forge: Use {@link net.minecraftforge.client.extensions.IForgeBlockStateModel#collectParts(RandomSource, List<BlockStateModelPart>, net.minecraftforge.client.model.data.ModelData)}*/
++    /**
++     * @deprecated {@link #collectParts(net.minecraft.client.renderer.block.BlockAndTintGetter, net.minecraft.core.BlockPos, BlockState, RandomSource, List)} should be used instead as to provide level context to the model.
++     */
++    @Deprecated
      void collectParts(RandomSource random, List<BlockStateModelPart> output);
  
-+    /**@deprecated Forge: Use {@link net.minecraftforge.client.extensions.IForgeBlockStateModel#particleMaterial(net.minecraftforge.client.model.data.ModelData)}*/
++    /**
++     * @deprecated {@link #particleMaterial(net.minecraft.client.renderer.block.BlockAndTintGetter, net.minecraft.core.BlockPos, BlockState)} should be used instead as to provide level context to the model.
++     */
++    @Deprecated
      Material.Baked particleMaterial();
  
++    /**
++     * This method returns the most general flags for the geometry produced by this model. That is the result must be accurate for any level context.
++     * <p>
++     * When level context is available, one should call {@link #collectParts(net.minecraft.client.renderer.block.BlockAndTintGetter, net.minecraft.core.BlockPos, BlockState, RandomSource, List)}
++     * instead as it will reflect what geometry may be produced for the specific context. Providing level context can avoid wasting resources on
++     * flags that may never be applicable for the context.
++     *
++     * @see #materialFlags(net.minecraft.client.renderer.block.BlockAndTintGetter, net.minecraft.core.BlockPos, BlockState, RandomSource)
++     */
      @BakedQuad.MaterialFlags int materialFlags();
+ 
++    /**
++     * This method returns the most general flags for the geometry produced by this model. That is the result must be accurate for any level context.
++     * <p>
++     * When level context is available, one should call {@link #hasMaterialFlag(net.minecraft.client.renderer.block.BlockAndTintGetter, net.minecraft.core.BlockPos, BlockState, RandomSource, int)}
++     * instead as it will reflect what geometry may be produced for the specific context. Providing level context can avoid wasting resources on
++     * flags that may never be applicable for the context.
++     *
++     * @see #materialFlags()
++     * @see #hasMaterialFlag(net.minecraft.client.renderer.block.BlockAndTintGetter, net.minecraft.core.BlockPos, BlockState, RandomSource, int)
++     */
+     default boolean hasMaterialFlag(final @BakedQuad.MaterialFlags int flag) {
+         return (this.materialFlags() & flag) != 0;
+     }

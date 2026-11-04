@@ -18,10 +18,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraft.world.level.Level;
-import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import org.jetbrains.annotations.NotNull;
 
 public interface IForgeBlockEntity extends ICapabilityProvider {
     private BlockEntity self() {
@@ -60,7 +57,6 @@ public interface IForgeBlockEntity extends ICapabilityProvider {
      * Override instead of adding {@code if (firstTick)} stuff in update.
      */
      default void onLoad() {
-         requestModelDataUpdate();
      }
 
      /**
@@ -104,32 +100,6 @@ public interface IForgeBlockEntity extends ICapabilityProvider {
              if (cbb != null) bb = cbb;
          }
          return bb;
-     }
-
-    /**
-     * Requests a refresh for the model data of your TE
-     * Call this every time your {@link #getModelData()} changes
-     */
-     default void requestModelDataUpdate() {
-         BlockEntity te = self();
-         Level level = te.getLevel();
-         if (level != null && level.isClientSide()) {
-             var modelDataManager = level.getModelDataManager();
-             if (modelDataManager != null) {
-                 modelDataManager.requestRefresh(te);
-             }
-         }
-     }
-
-    /**
-     * Allows you to return additional model data.
-     * This data can be used to provide additional functionality in your {@link BakedModel}
-     * You need to schedule a refresh of you model data via {@link #requestModelDataUpdate()} if the result of this function changes.
-     * <b>Note that this method may be called on a chunk render thread instead of the main client thread</b>
-     * @return Your model data
-     */
-     default @NotNull ModelData getModelData() {
-         return ModelData.EMPTY;
      }
 
     /**

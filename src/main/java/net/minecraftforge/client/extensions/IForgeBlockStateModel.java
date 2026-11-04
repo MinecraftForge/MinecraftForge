@@ -8,11 +8,11 @@ package net.minecraftforge.client.extensions;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.ModelData;
 import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
@@ -22,20 +22,40 @@ public interface IForgeBlockStateModel {
         return (BlockStateModel)this;
     }
 
-    default @NotNull ModelData getModelData(@NotNull BlockAndTintGetter level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull ModelData modelData) {
-        return modelData;
-    }
-
-    default Material.Baked particleMaterial(@NotNull ModelData data) {
+    default Material.Baked particleMaterial(@NotNull BlockAndTintGetter level, @NotNull BlockPos pos, @NotNull BlockState state) {
         return self().particleMaterial();
     }
 
     /**
-     * Collects the parts of this model with the specified ModelData.
-     * Not all paths call this, or pass in empty data. So it is recommended to also implement a sane default in
-     * the normal {@link BlockStateModel#collectParts(RandomSource, List)} method.
+     * Outputs geometry for the given level context to the given list.
+     * <p>
+     * Note that the output {@link BlockStateModelPart}s must not maintain references to the level or objects in the level. Maintaining such
+     * references and accessing them from the {@link BlockStateModelPart} will cause concurrency issues and thus must be avoided.
      */
-    default void collectParts(RandomSource random, List<BlockStateModelPart> output, ModelData data) {
+    default void collectParts(@NotNull BlockAndTintGetter level, @NotNull BlockPos pos, @NotNull BlockState state, RandomSource random, List<BlockStateModelPart> output) {
         self().collectParts(random, output);
+    }
+
+    /**
+     * Provides flags for the geometry that may result from {@link #collectParts(BlockAndTintGetter, BlockPos, BlockState, RandomSource, List)}
+     * for the specific level context. Note that the result of this method says nothing about the geometry produced by this model under
+     * different level context.
+     *
+     * @see BlockStateModel#materialFlags()
+     */
+    default @BakedQuad.MaterialFlags int materialFlags(@NotNull BlockAndTintGetter level, @NotNull BlockPos pos, @NotNull BlockState state, RandomSource random) {
+        return self().materialFlags();
+    }
+
+    /**
+     * Provides flags for the geometry that may result from {@link #collectParts(BlockAndTintGetter, BlockPos, BlockState, RandomSource, List)}
+     * for the specific level context. Note that the result of this method says nothing about the geometry produced by this model under
+     * different level context.
+     *
+     * @see #materialFlags(BlockAndTintGetter, BlockPos, BlockState, RandomSource)
+     * @see BlockStateModel#hasMaterialFlag(int)
+     */
+    default boolean hasMaterialFlag(@NotNull BlockAndTintGetter level, @NotNull BlockPos pos, @NotNull BlockState state, RandomSource random, @BakedQuad.MaterialFlags int flag) {
+        return (this.materialFlags(level, pos, state, random) & flag) != 0;
     }
 }

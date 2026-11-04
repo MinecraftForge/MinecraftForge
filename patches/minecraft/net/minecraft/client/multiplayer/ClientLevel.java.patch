@@ -8,12 +8,11 @@
      });
      private final ClientChunkCache chunkSource;
      private final Deque<Runnable> lightUpdateQueue = Queues.newArrayDeque();
-@@ -181,6 +_,8 @@
+@@ -181,6 +_,7 @@
      private final Long2ObjectMap<SortedSet<BlockDestructionProgress>> destructionProgress = new Long2ObjectOpenHashMap<>();
      private final int seaLevel;
      private static final Set<Item> MARKER_PARTICLE_ITEMS = Set.of(Items.BARRIER, Items.LIGHT);
 +    private final it.unimi.dsi.fastutil.ints.Int2ObjectMap<net.minecraftforge.entity.PartEntity<?>> partEntities = new it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap<>();
-+    private final net.minecraftforge.client.model.data.ModelDataManager modelDataManager = new net.minecraftforge.client.model.data.ModelDataManager(this);
  
      public void handleBlockChangedAck(final int sequence) {
          if (SharedConstants.DEBUG_BLOCK_BREAK) {
@@ -108,18 +107,13 @@
          this.minecraft
              .getSoundManager()
              .play(
-@@ -1248,6 +_,16 @@
+@@ -1248,6 +_,11 @@
          this.explosionTracker.track(center, radius, blockCount, blockParticles);
      }
  
 +    @Override
 +    public java.util.Collection<net.minecraftforge.entity.PartEntity<?>> getPartEntities() {
 +       return this.partEntities.values();
-+    }
-+
-+    @Override
-+    public net.minecraftforge.client.model.data.ModelDataManager getModelDataManager() {
-+       return modelDataManager;
 +    }
 +
      @OnlyIn(Dist.CLIENT)
