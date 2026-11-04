@@ -1,5 +1,22 @@
 --- a/net/minecraft/client/renderer/block/dispatch/WeightedVariants.java
 +++ b/net/minecraft/client/renderer/block/dispatch/WeightedVariants.java
+@@ -1,13 +_,16 @@
+ package net.minecraft.client.renderer.block.dispatch;
+ 
+ import java.util.List;
++import net.minecraft.client.renderer.block.BlockAndTintGetter;
+ import net.minecraft.client.resources.model.ModelBaker;
+ import net.minecraft.client.resources.model.ResolvableModel;
+ import net.minecraft.client.resources.model.geometry.BakedQuad;
+ import net.minecraft.client.resources.model.sprite.Material;
++import net.minecraft.core.BlockPos;
+ import net.minecraft.util.RandomSource;
+ import net.minecraft.util.random.Weighted;
+ import net.minecraft.util.random.WeightedList;
++import net.minecraft.world.level.block.state.BlockState;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
 @@ -16,11 +_,13 @@
      private final WeightedList<BlockStateModel> list;
      private final Material.Baked particleMaterial;
@@ -14,27 +31,37 @@
          this.materialFlags = computeMaterialFlags(list);
      }
  
-@@ -40,6 +_,11 @@
+@@ -40,13 +_,33 @@
      }
  
      @Override
-+    public Material.Baked particleMaterial(net.minecraftforge.client.model.data.ModelData data) {
-+        return this.first.particleMaterial(data);
++    public Material.Baked particleMaterial(BlockAndTintGetter level, BlockPos pos, BlockState state) {
++        return this.first.particleMaterial(level, pos, state);
 +    }
 +
 +    @Override
      public @BakedQuad.MaterialFlags int materialFlags() {
          return this.materialFlags;
      }
-@@ -47,6 +_,11 @@
+ 
      @Override
++    public @BakedQuad.MaterialFlags int materialFlags(BlockAndTintGetter level, BlockPos pos, BlockState state, RandomSource random) {
++        return this.list.getRandomOrThrow(random).materialFlags(level, pos, state, random);
++    }
++
++    @Override
++    public boolean hasMaterialFlag(BlockAndTintGetter level, BlockPos pos, BlockState state, RandomSource random, @BakedQuad.MaterialFlags int flag) {
++        return this.list.getRandomOrThrow(random).hasMaterialFlag(level, pos, state, random, flag);
++    }
++
++    @Override
      public void collectParts(final RandomSource random, final List<BlockStateModelPart> output) {
          this.list.getRandomOrThrow(random).collectParts(random, output);
 +    }
 +
 +    @Override
-+    public void collectParts(final RandomSource random, final List<BlockStateModelPart> output, net.minecraftforge.client.model.data.ModelData data) {
-+        this.list.getRandomOrThrow(random).collectParts(random, output, data);
++    public void collectParts(BlockAndTintGetter level, BlockPos pos, BlockState state, RandomSource random, List<BlockStateModelPart> output) {
++        this.list.getRandomOrThrow(random).collectParts(level, pos, state, random, output);
      }
  
      @OnlyIn(Dist.CLIENT)

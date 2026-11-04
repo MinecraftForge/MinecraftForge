@@ -1,13 +1,28 @@
 --- a/net/minecraft/client/renderer/block/dispatch/multipart/MultiPartModel.java
 +++ b/net/minecraft/client/renderer/block/dispatch/multipart/MultiPartModel.java
-@@ -38,12 +_,24 @@
+@@ -9,12 +_,14 @@
+ import java.util.Map;
+ import java.util.concurrent.ConcurrentHashMap;
+ import java.util.function.Predicate;
++import net.minecraft.client.renderer.block.BlockAndTintGetter;
+ import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
+ import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
+ import net.minecraft.client.resources.model.ModelBaker;
+ import net.minecraft.client.resources.model.ResolvableModel;
+ import net.minecraft.client.resources.model.geometry.BakedQuad;
+ import net.minecraft.client.resources.model.sprite.Material;
++import net.minecraft.core.BlockPos;
+ import net.minecraft.util.RandomSource;
+ import net.minecraft.world.level.block.state.BlockState;
+ import net.minecraftforge.api.distmarker.Dist;
+@@ -38,11 +_,51 @@
      }
  
      @Override
-+    public Material.Baked particleMaterial(net.minecraftforge.client.model.data.ModelData data) {
++    public Material.Baked particleMaterial(BlockAndTintGetter level, BlockPos pos, BlockState state) {
 +        if (this.models == null)
 +            this.models = this.shared.selectModels(this.blockState);
-+        return this.models.getFirst().particleMaterial(data);
++        return this.models.getFirst().particleMaterial(level, pos, state);
 +    }
 +
 +    @Override
@@ -16,21 +31,60 @@
      }
  
      @Override
-     public void collectParts(final RandomSource random, final List<BlockStateModelPart> output) {
-+        collectParts(random, output, net.minecraftforge.client.model.data.ModelData.EMPTY);
++    public @BakedQuad.MaterialFlags int materialFlags(BlockAndTintGetter level, BlockPos pos, BlockState state, RandomSource random) {
++        if (this.models == null) {
++            this.models = this.shared.selectModels(this.blockState);
++        }
++
++        int flags = 0;
++        long seed = random.nextLong();
++
++        for (BlockStateModel model : this.models) {
++            random.setSeed(seed);
++            flags |= model.materialFlags(level, pos, state, random);
++        }
++        return flags;
 +    }
 +
 +    @Override
-+    public void collectParts(final RandomSource random, final List<BlockStateModelPart> output, net.minecraftforge.client.model.data.ModelData data) {
++    public boolean hasMaterialFlag(BlockAndTintGetter level, BlockPos pos, BlockState state, RandomSource random, @BakedQuad.MaterialFlags int flag) {
++        if (this.models == null) {
++            this.models = this.shared.selectModels(this.blockState);
++        }
++
++        long seed = random.nextLong();
++
++        for (BlockStateModel model : this.models) {
++            random.setSeed(seed);
++            if (model.hasMaterialFlag(level, pos, state, random, flag)) {
++                return true;
++            }
++        }
++        return false;
++    }
++
++    @Override
+     public void collectParts(final RandomSource random, final List<BlockStateModelPart> output) {
          if (this.models == null) {
              this.models = this.shared.selectModels(this.blockState);
-         }
-@@ -52,7 +_,7 @@
- 
-         for (BlockStateModel model : this.models) {
-             random.setSeed(seed);
--            model.collectParts(random, output);
-+            model.collectParts(random, output, data);
+@@ -56,6 +_,20 @@
          }
      }
  
++    @Override
++    public void collectParts(BlockAndTintGetter level, BlockPos pos, BlockState state, RandomSource random, List<BlockStateModelPart> output) {
++        if (this.models == null) {
++            this.models = this.shared.selectModels(this.blockState);
++        }
++
++        long seed = random.nextLong();
++
++        for (BlockStateModel model : this.models) {
++            random.setSeed(seed);
++            model.collectParts(level, pos, state, random, output);
++        }
++    }
++
+     @OnlyIn(Dist.CLIENT)
+     public record Selector<T>(Predicate<BlockState> condition, T model) {
+         public <S> MultiPartModel.Selector<S> with(final S newModel) {

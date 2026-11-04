@@ -5,8 +5,8 @@
  
  @OnlyIn(Dist.CLIENT)
 -public record BlockBreakingRenderState(BlockPos blockPos, BlockState blockState, int progress) {
-+public record BlockBreakingRenderState(BlockPos blockPos, BlockState blockState, int progress, net.minecraftforge.client.model.data.ModelData data) {
++public record BlockBreakingRenderState(BlockPos blockPos, BlockState blockState, int progress, @org.jetbrains.annotations.Nullable java.util.List<net.minecraft.client.renderer.block.dispatch.BlockStateModelPart> parts) {
 +    public BlockBreakingRenderState(BlockPos blockPos, BlockState blockState, int progress) {
-+        this(blockPos, blockState, progress, net.minecraftforge.client.model.data.ModelData.EMPTY);
++        this(blockPos, blockState, progress, null);
 +    }
  }

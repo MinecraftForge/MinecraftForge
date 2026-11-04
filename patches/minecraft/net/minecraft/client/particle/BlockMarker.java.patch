@@ -5,7 +5,7 @@
  
      private BlockMarker(final ClientLevel level, final double x, final double y, final double z, final BlockState state) {
 -        super(level, x, y, z, Minecraft.getInstance().getModelManager().getBlockStateModelSet().getParticleMaterial(state).sprite());
-+        super(level, x, y, z, Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(state).particleMaterial(level.getModelDataManager().getAtOrEmpty(x, y, z)).sprite());
++        super(level, x, y, z, Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(state).particleMaterial(level, net.minecraft.core.BlockPos.containing(x, y, z), state).sprite());
          this.gravity = 0.0F;
          this.lifetime = 80;
          this.hasPhysics = false;

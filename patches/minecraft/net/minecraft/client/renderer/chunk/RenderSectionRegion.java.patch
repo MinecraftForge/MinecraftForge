@@ -7,6 +7,6 @@
 +
 +    @Override
 +    public net.minecraftforge.client.model.data.ModelDataManager getModelDataManager() {
-+       return level.getModelDataManager();
++        return level.getModelDataManager();
 +    }
  }

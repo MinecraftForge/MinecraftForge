@@ -119,7 +119,7 @@
 +
 +    @Override
 +    public net.minecraftforge.client.model.data.ModelDataManager getModelDataManager() {
-+       return modelDataManager;
++        return modelDataManager;
 +    }
 +
      @OnlyIn(Dist.CLIENT)

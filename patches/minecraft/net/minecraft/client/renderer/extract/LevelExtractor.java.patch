@@ -34,12 +34,27 @@
                  BlockEntityRenderState state = this.levelRenderer
                      .blockEntityRenderDispatcher()
                      .tryExtractRenderState(blockEntity, deltaPartialTick, null, true);
-@@ -375,7 +_,7 @@
+@@ -369,13 +_,22 @@
+         double camZ = cameraPos.z();
+         levelRenderState.blockBreakingRenderStates.clear();
+ 
++        List<net.minecraft.client.renderer.block.dispatch.BlockStateModelPart> parts = new java.util.ArrayList<>();
++        var random = net.minecraft.util.RandomSource.createThreadLocalInstance();
++        var blockStateModels = this.minecraft.getModelManager().getBlockStateModelSet();
++
+         for (Entry<SortedSet<BlockDestructionProgress>> entry : this.level.destructionProgress().long2ObjectEntrySet()) {
+             BlockPos pos = BlockPos.of(entry.getLongKey());
+             if (!(pos.distToCenterSqr(camX, camY, camZ) > 1024.0)) {
                  SortedSet<BlockDestructionProgress> progresses = entry.getValue();
                  if (progresses != null && !progresses.isEmpty()) {
                      int progress = progresses.last().getProgress();
 -                    levelRenderState.blockBreakingRenderStates.add(new BlockBreakingRenderState(pos, this.level.getBlockState(pos), progress));
-+                    levelRenderState.blockBreakingRenderStates.add(new BlockBreakingRenderState(pos, this.level.getBlockState(pos), progress, this.level.getModelDataManager().getAtOrEmpty(pos)));
++                    // Forge: Part collection is moved from `LevelRenderer#submitBlockDestroyAnimation` to extraction stage to provide level context to the model
++                    BlockState state = this.level.getBlockState(pos);
++                    BlockStateModel model = blockStateModels.get(state);
++                    random.setSeed(state.getSeed(pos));
++                    model.collectParts(this.level, pos, state, random, parts);
++                    levelRenderState.blockBreakingRenderStates.add(new BlockBreakingRenderState(pos, state, progress, List.copyOf(parts)));
                  }
              }
          }

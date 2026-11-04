@@ -18,6 +18,23 @@
              this.submitBlockOutline(poseStack, this.submitNodeStorage, levelRenderState);
          }
  
+@@ -1038,9 +_,13 @@
+                     poseStack.translate(pos.getX() - camX, pos.getY() - camY, pos.getZ() - camZ);
+                     poseStack.translate(state.blockState().getOffset(pos));
+                     BlockStateModel model = this.modelManager.getBlockStateModelSet().get(state.blockState());
+-                    random.setSeed(state.blockState().getSeed(pos));
+-                    model.collectParts(random, parts);
+-                    submitNodeCollector.submitBreakingBlockModel(poseStack, List.copyOf(parts), state.progress(), model.hasMaterialFlag(1));
++                    if(state.parts() != null) { // Forge collects parts during extraction stage
++                        submitNodeCollector.submitBreakingBlockModel(poseStack, List.copyOf(parts), state.progress(), model.hasMaterialFlag(1));
++                    } else {
++                        random.setSeed(state.blockState().getSeed(pos));
++                        model.collectParts(random, parts);
++                        submitNodeCollector.submitBreakingBlockModel(poseStack, List.copyOf(parts), state.progress(), model.hasMaterialFlag(1));
++                    }
+                     parts.clear();
+                     poseStack.popPose();
+                 }
 @@ -1075,6 +_,10 @@
      private void submitBlockOutline(final PoseStack poseStack, final SubmitNodeCollector submitNodeCollector, final LevelRenderState levelRenderState) {
          BlockOutlineRenderState state = levelRenderState.blockOutlineRenderState;

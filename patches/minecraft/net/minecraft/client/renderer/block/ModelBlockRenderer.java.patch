@@ -1,34 +1,16 @@
 --- a/net/minecraft/client/renderer/block/ModelBlockRenderer.java
 +++ b/net/minecraft/client/renderer/block/ModelBlockRenderer.java
-@@ -49,6 +_,12 @@
-         return !cutoutLeaves && blockState.getBlock() instanceof LeavesBlock;
-     }
- 
-+
-+    /** @deprecated Use ModelData variant */
-+    public void tesselateBlock(final BlockQuadOutput output, final float x, final float y, final float z, final BlockAndTintGetter level, final BlockPos pos, final BlockState blockState, final BlockStateModel model, final long seed) {
-+        tesselateBlock(output, x, y, z, level, pos, blockState, model, seed, net.minecraftforge.client.model.data.ModelData.EMPTY);
-+    }
-+
-     public void tesselateBlock(
-         final BlockQuadOutput output,
-         final float x,
-@@ -58,14 +_,15 @@
-         final BlockPos pos,
-         final BlockState blockState,
-         final BlockStateModel model,
--        final long seed
-+        final long seed,
-+        net.minecraftforge.client.model.data.ModelData modelData
+@@ -61,11 +_,11 @@
+         final long seed
      ) {
          this.random.setSeed(seed);
 -        model.collectParts(this.random, this.parts);
-+        model.collectParts(this.random, this.parts, modelData);
++        model.collectParts(level, pos, blockState, this.random, this.parts);
          if (!this.parts.isEmpty()) {
              try {
                  Vec3 offset = blockState.getOffset(pos);
 -                if (this.ambientOcclusion && blockState.getLightEmission() == 0 && this.parts.getFirst().useAmbientOcclusion()) {
-+                if (this.ambientOcclusion && blockState.getLightEmission(level, pos) == 0 && this.parts.getFirst().useAmbientOcclusion()) {
++                if (this.ambientOcclusion && blockState.getLightEmission() == 0 && ((BlockStateModelPart)this.parts.getFirst()).useAmbientOcclusion()) {
                      this.tesselateAmbientOcclusion(output, x + (float)offset.x, y + (float)offset.y, z + (float)offset.z, this.parts, level, blockState, pos);
                  } else {
                      this.tesselateFlat(output, x + (float)offset.x, y + (float)offset.y, z + (float)offset.z, this.parts, level, blockState, pos);

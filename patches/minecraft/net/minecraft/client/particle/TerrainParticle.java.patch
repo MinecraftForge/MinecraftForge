@@ -20,7 +20,7 @@
 +
 +    public Particle updateSprite(BlockState state, BlockPos pos) { //FORGE: we cannot assume that the x y z of the particles match the block pos of the block.
 +        if (pos != null) // There are cases where we are not able to obtain the correct source pos, and need to fallback to the non-model data version
-+           this.setSprite(Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(state).particleMaterial(level.getModelDataManager().getAt(pos)).sprite());
++           this.setSprite(Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(state).particleMaterial(this.level, pos, state).sprite());
 +        return this;
      }
  
