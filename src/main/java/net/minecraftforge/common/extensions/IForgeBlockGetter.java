@@ -11,6 +11,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.*;
+import net.minecraftforge.client.model.data.ModelDataManager;
 import org.jetbrains.annotations.Nullable;
 
 public interface IForgeBlockGetter
@@ -46,5 +47,15 @@ public interface IForgeBlockGetter
             return chunk.getWrapped().getExistingBlockEntity(pos);
         }
         return self().getBlockEntity(pos);
+    }
+
+    /**
+     * Retrieves the model data manager for this level.
+     * This will be {@code null} on a server level.
+     */
+    @Nullable
+    default ModelDataManager getModelDataManager()
+    {
+        return null;
     }
 }

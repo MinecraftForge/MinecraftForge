@@ -42,11 +42,12 @@
      }
  
      public final CompoundTag saveWithFullMetadata(final HolderLookup.Provider registries) {
-@@ -224,6 +_,12 @@
+@@ -224,6 +_,13 @@
  
      public void setRemoved() {
          this.remove = true;
 +        this.invalidateCaps();
++        requestModelDataUpdate();
 +    }
 +
 +    @Override
