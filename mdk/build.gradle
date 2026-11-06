@@ -1,6 +1,7 @@
 plugins {
     id 'eclipse'
     id 'idea'
+    id 'java'
     id 'maven-publish'
     id 'net.minecraftforge.gradle' version '[7.0,8)'
     id 'net.minecraftforge.renamer' version '1.1.8+'
