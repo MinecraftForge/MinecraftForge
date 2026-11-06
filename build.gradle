@@ -1633,7 +1633,7 @@ project(':forge') {
     }
 
     final mdkGradleWrapper = tasks.register('mdkGradleWrapper', Wrapper) {
-        gradleVersion = "9.2.0"
+        gradleVersion = "9.3.0"
         scriptFile = layout.buildDirectory.dir("wrapper/" + gradleVersion + "/gradlew")
         jarFile = layout.buildDirectory.dir("wrapper/" + gradleVersion + "/gradle/wrapper/gradle-wrapper.jar")
     }
