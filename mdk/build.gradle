@@ -1,10 +1,13 @@
+// Don't see a feature you're wanting to use?
+// See our MDKExamples repository for minimal examples for features like JarInJar
+// https://github.com/MinecraftForge/MDKExamples
 plugins {
     id 'eclipse'
     id 'idea'
     id 'java'
     id 'maven-publish'
     id 'net.minecraftforge.gradle' version '[7.0,8)'
-    id 'net.minecraftforge.renamer' version '1.1.8+'
+    id 'net.minecraftforge.renamer' version '1.1.8+' // Required on all versions which use SRG maps at runtime.
 }
 
 version = '1.0'
@@ -33,10 +36,6 @@ minecraft {
             workingDir.convention layout.projectDirectory.dir('run')
 
             //systemProperty 'forge.logging.markers', 'REGISTRIES'
-
-            systemProperty 'forge.logging.console.level', 'debug'
-
-            systemProperty 'eventbus.api.strictRuntimeChecks', 'true'
 
             //args "-mixin.config=${mod_id}.mixins.json"
         }
@@ -110,8 +109,11 @@ tasks.named('jar', Jar) {
         ])
         //attributes['MixinConfigs'] = "${mod_id}.mixins.json"
     }
-
-    archiveClassifier = 'slim'
+    // This artifact will not be renamed. While this will not launch in production
+    // the artifact may be helpful for other developers if your mod is used as a library.
+    // By assigning this archive classifier, jar file name will end in '-unobfuscated'
+    // e.g. 'examplemod-1.0-unobfuscated.jar'
+    archiveClassifier = 'unobfuscated'
 }
 
 // Set the default mappings file to our default minecraft dependency
@@ -128,6 +130,10 @@ renamer.mappings.from minecraft.dependency.toSrgFile
 
 // Creates a task named 'renameJar'
 renamer.classes(tasks.named('jar', Jar)) {
+    // This artifact will be remapped according to the provided mappings file
+    // Setting the classifier to '' will attach no extra details to the file name.
+    // e.g. 'examplemod-1.0.jar'
+    archiveClassifier = ''
     // Unless set globally like above, You need to point to the mappings you wish to apply, typically this is
     // the Mapped names to SRG for older versions.
     // ForgeGradle/Mavenizer generate these files for the dependencies you declare. So you can use the helper.
@@ -136,11 +142,8 @@ renamer.classes(tasks.named('jar', Jar)) {
 
     // The mixin AP does not include all annotated entries, instead containing some in the augmented mappings.
     // So, if you are using mixins or have dependencies which use them, uncomment the below line to tell renamer
-    // that the generated mappings are available.
+    // that the generated mappings are available. See the MDKExample for more details.
     // mappings renamer.mixin.generatedMappings
-
-    // This is publishable task so you can specify things such as the classifier
-    archiveClassifier = 'srg'
 }
 
 // Example configuration to allow publishing using the maven-publish plugin
@@ -163,14 +166,3 @@ tasks.withType(JavaCompile).configureEach {
 
 // IntelliJ no longer downloads javadocs and sources by default, this tells Gradle to force IntelliJ to do it.
 idea.module { downloadJavadoc = downloadSources = true }
-
-eclipse {
-    // Eclipse no longer downloads javadocs and sources by default, this tells Gradle to force Eclipse to do it.
-    classpath { downloadJavadoc = downloadSources = true }
-
-    // NOTE: ForgeGradle 7 does not yet support Eclipse run configurations
-    // Run everytime eclipse builds the code
-    //autoBuildTasks genEclipseRuns
-    // Run when importing the project
-    //synchronizationTasks 'genEclipseRuns'
-}
