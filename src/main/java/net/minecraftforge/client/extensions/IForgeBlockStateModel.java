@@ -8,7 +8,6 @@ package net.minecraftforge.client.extensions;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
-import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
@@ -41,28 +40,5 @@ public interface IForgeBlockStateModel {
      */
     default void collectParts(@NotNull BlockAndTintGetter level, @NotNull BlockPos pos, @NotNull BlockState state, RandomSource random, List<BlockStateModelPart> output) {
         self().collectParts(random, output);
-    }
-
-    /**
-     * Provides flags for the geometry that may result from {@link #collectParts(BlockAndTintGetter, BlockPos, BlockState, RandomSource, List)}
-     * for the specific level context. Note that the result of this method says nothing about the geometry produced by this model under
-     * different level context.
-     *
-     * @see BlockStateModel#materialFlags()
-     */
-    default @BakedQuad.MaterialFlags int materialFlags(@NotNull BlockAndTintGetter level, @NotNull BlockPos pos, @NotNull BlockState state, RandomSource random) {
-        return self().materialFlags();
-    }
-
-    /**
-     * Provides flags for the geometry that may result from {@link #collectParts(BlockAndTintGetter, BlockPos, BlockState, RandomSource, List)}
-     * for the specific level context. Note that the result of this method says nothing about the geometry produced by this model under
-     * different level context.
-     *
-     * @see #materialFlags(BlockAndTintGetter, BlockPos, BlockState, RandomSource)
-     * @see BlockStateModel#hasMaterialFlag(int)
-     */
-    default boolean hasMaterialFlag(@NotNull BlockAndTintGetter level, @NotNull BlockPos pos, @NotNull BlockState state, RandomSource random, @BakedQuad.MaterialFlags int flag) {
-        return (this.materialFlags(level, pos, state, random) & flag) != 0;
     }
 }

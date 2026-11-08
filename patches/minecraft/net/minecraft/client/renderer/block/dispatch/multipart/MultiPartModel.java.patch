@@ -15,7 +15,7 @@
  import net.minecraft.util.RandomSource;
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraftforge.api.distmarker.Dist;
-@@ -38,11 +_,51 @@
+@@ -38,6 +_,13 @@
      }
  
      @Override
@@ -29,44 +29,6 @@
      public @BakedQuad.MaterialFlags int materialFlags() {
          return this.shared.materialFlags;
      }
- 
-     @Override
-+    public @BakedQuad.MaterialFlags int materialFlags(BlockAndTintGetter level, BlockPos pos, BlockState state, RandomSource random) {
-+        if (this.models == null) {
-+            this.models = this.shared.selectModels(this.blockState);
-+        }
-+
-+        int flags = 0;
-+        long seed = random.nextLong();
-+
-+        for (BlockStateModel model : this.models) {
-+            random.setSeed(seed);
-+            flags |= model.materialFlags(level, pos, state, random);
-+        }
-+        return flags;
-+    }
-+
-+    @Override
-+    public boolean hasMaterialFlag(BlockAndTintGetter level, BlockPos pos, BlockState state, RandomSource random, @BakedQuad.MaterialFlags int flag) {
-+        if (this.models == null) {
-+            this.models = this.shared.selectModels(this.blockState);
-+        }
-+
-+        long seed = random.nextLong();
-+
-+        for (BlockStateModel model : this.models) {
-+            random.setSeed(seed);
-+            if (model.hasMaterialFlag(level, pos, state, random, flag)) {
-+                return true;
-+            }
-+        }
-+        return false;
-+    }
-+
-+    @Override
-     public void collectParts(final RandomSource random, final List<BlockStateModelPart> output) {
-         if (this.models == null) {
-             this.models = this.shared.selectModels(this.blockState);
 @@ -56,6 +_,20 @@
          }
      }
@@ -88,3 +50,12 @@
      @OnlyIn(Dist.CLIENT)
      public record Selector<T>(Predicate<BlockState> condition, T model) {
          public <S> MultiPartModel.Selector<S> with(final S newModel) {
+@@ -122,7 +_,7 @@
+     public static class Unbaked implements BlockStateModel.UnbakedRoot {
+         private final List<MultiPartModel.Selector<BlockStateModel.Unbaked>> selectors;
+         private final ModelBaker.SharedOperationKey<MultiPartModel.SharedBakedState> sharedStateKey = new ModelBaker.SharedOperationKey<MultiPartModel.SharedBakedState>(
+-            
++
+         ) {
+             public MultiPartModel.SharedBakedState compute(final ModelBaker modelBakery) {
+                 Builder<MultiPartModel.Selector<BlockStateModel>> selectors = ImmutableList.builderWithExpectedSize(Unbaked.this.selectors.size());

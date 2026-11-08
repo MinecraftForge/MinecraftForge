@@ -31,7 +31,7 @@
          this.materialFlags = computeMaterialFlags(list);
      }
  
-@@ -40,13 +_,33 @@
+@@ -40,6 +_,11 @@
      }
  
      @Override
@@ -43,18 +43,8 @@
      public @BakedQuad.MaterialFlags int materialFlags() {
          return this.materialFlags;
      }
- 
+@@ -47,6 +_,11 @@
      @Override
-+    public @BakedQuad.MaterialFlags int materialFlags(BlockAndTintGetter level, BlockPos pos, BlockState state, RandomSource random) {
-+        return this.list.getRandomOrThrow(random).materialFlags(level, pos, state, random);
-+    }
-+
-+    @Override
-+    public boolean hasMaterialFlag(BlockAndTintGetter level, BlockPos pos, BlockState state, RandomSource random, @BakedQuad.MaterialFlags int flag) {
-+        return this.list.getRandomOrThrow(random).hasMaterialFlag(level, pos, state, random, flag);
-+    }
-+
-+    @Override
      public void collectParts(final RandomSource random, final List<BlockStateModelPart> output) {
          this.list.getRandomOrThrow(random).collectParts(random, output);
 +    }
