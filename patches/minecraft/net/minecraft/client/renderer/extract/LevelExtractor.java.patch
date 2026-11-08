@@ -34,7 +34,7 @@
                  BlockEntityRenderState state = this.levelRenderer
                      .blockEntityRenderDispatcher()
                      .tryExtractRenderState(blockEntity, deltaPartialTick, null, true);
-@@ -369,13 +_,22 @@
+@@ -369,13 +_,23 @@
          double camZ = cameraPos.z();
          levelRenderState.blockBreakingRenderStates.clear();
  
@@ -55,6 +55,7 @@
 +                    random.setSeed(state.getSeed(pos));
 +                    model.collectParts(this.level, pos, state, random, parts);
 +                    levelRenderState.blockBreakingRenderStates.add(new BlockBreakingRenderState(pos, state, progress, List.copyOf(parts)));
++                    parts.clear();
                  }
              }
          }
