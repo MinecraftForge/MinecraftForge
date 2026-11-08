@@ -1,22 +1,5 @@
 --- a/net/minecraft/client/renderer/block/dispatch/WeightedVariants.java
 +++ b/net/minecraft/client/renderer/block/dispatch/WeightedVariants.java
-@@ -1,13 +_,16 @@
- package net.minecraft.client.renderer.block.dispatch;
- 
- import java.util.List;
-+import net.minecraft.client.renderer.block.BlockAndTintGetter;
- import net.minecraft.client.resources.model.ModelBaker;
- import net.minecraft.client.resources.model.ResolvableModel;
- import net.minecraft.client.resources.model.geometry.BakedQuad;
- import net.minecraft.client.resources.model.sprite.Material;
-+import net.minecraft.core.BlockPos;
- import net.minecraft.util.RandomSource;
- import net.minecraft.util.random.Weighted;
- import net.minecraft.util.random.WeightedList;
-+import net.minecraft.world.level.block.state.BlockState;
- import net.minecraftforge.api.distmarker.Dist;
- import net.minecraftforge.api.distmarker.OnlyIn;
- 
 @@ -16,11 +_,13 @@
      private final WeightedList<BlockStateModel> list;
      private final Material.Baked particleMaterial;
@@ -35,7 +18,7 @@
      }
  
      @Override
-+    public Material.Baked particleMaterial(BlockAndTintGetter level, BlockPos pos, BlockState state) {
++    public Material.Baked particleMaterial(net.minecraft.client.renderer.block.BlockAndTintGetter level, net.minecraft.core.BlockPos pos, net.minecraft.world.level.block.state.BlockState state) {
 +        return this.first.particleMaterial(level, pos, state);
 +    }
 +
@@ -50,7 +33,7 @@
 +    }
 +
 +    @Override
-+    public void collectParts(BlockAndTintGetter level, BlockPos pos, BlockState state, RandomSource random, List<BlockStateModelPart> output) {
++    public void collectParts(net.minecraft.client.renderer.block.BlockAndTintGetter level, net.minecraft.core.BlockPos pos, net.minecraft.world.level.block.state.BlockState state, RandomSource random, List<BlockStateModelPart> output) {
 +        this.list.getRandomOrThrow(random).collectParts(level, pos, state, random, output);
      }
  

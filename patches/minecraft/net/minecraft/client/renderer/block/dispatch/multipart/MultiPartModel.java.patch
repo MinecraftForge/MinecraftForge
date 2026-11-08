@@ -1,25 +1,10 @@
 --- a/net/minecraft/client/renderer/block/dispatch/multipart/MultiPartModel.java
 +++ b/net/minecraft/client/renderer/block/dispatch/multipart/MultiPartModel.java
-@@ -9,12 +_,14 @@
- import java.util.Map;
- import java.util.concurrent.ConcurrentHashMap;
- import java.util.function.Predicate;
-+import net.minecraft.client.renderer.block.BlockAndTintGetter;
- import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
- import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
- import net.minecraft.client.resources.model.ModelBaker;
- import net.minecraft.client.resources.model.ResolvableModel;
- import net.minecraft.client.resources.model.geometry.BakedQuad;
- import net.minecraft.client.resources.model.sprite.Material;
-+import net.minecraft.core.BlockPos;
- import net.minecraft.util.RandomSource;
- import net.minecraft.world.level.block.state.BlockState;
- import net.minecraftforge.api.distmarker.Dist;
-@@ -38,6 +_,13 @@
+@@ -38,12 +_,24 @@
      }
  
      @Override
-+    public Material.Baked particleMaterial(BlockAndTintGetter level, BlockPos pos, BlockState state) {
++    public Material.Baked particleMaterial(net.minecraft.client.renderer.block.BlockAndTintGetter level, net.minecraft.core.BlockPos pos, BlockState state) {
 +        if (this.models == null)
 +            this.models = this.shared.selectModels(this.blockState);
 +        return this.models.getFirst().particleMaterial(level, pos, state);
@@ -29,33 +14,23 @@
      public @BakedQuad.MaterialFlags int materialFlags() {
          return this.shared.materialFlags;
      }
-@@ -56,6 +_,20 @@
+ 
+     @Override
+     public void collectParts(final RandomSource random, final List<BlockStateModelPart> output) {
++        this.collectParts(net.minecraft.client.renderer.block.BlockAndTintGetter.EMPTY, net.minecraft.core.BlockPos.ZERO, this.blockState, random, output);
++    }
++
++    @Override
++    public void collectParts(net.minecraft.client.renderer.block.BlockAndTintGetter level, net.minecraft.core.BlockPos pos, BlockState state, RandomSource random, List<BlockStateModelPart> output) {
+         if (this.models == null) {
+             this.models = this.shared.selectModels(this.blockState);
+         }
+@@ -52,7 +_,7 @@
+ 
+         for (BlockStateModel model : this.models) {
+             random.setSeed(seed);
+-            model.collectParts(random, output);
++            model.collectParts(level, pos, state, random, output);
          }
      }
  
-+    @Override
-+    public void collectParts(BlockAndTintGetter level, BlockPos pos, BlockState state, RandomSource random, List<BlockStateModelPart> output) {
-+        if (this.models == null) {
-+            this.models = this.shared.selectModels(this.blockState);
-+        }
-+
-+        long seed = random.nextLong();
-+
-+        for (BlockStateModel model : this.models) {
-+            random.setSeed(seed);
-+            model.collectParts(level, pos, state, random, output);
-+        }
-+    }
-+
-     @OnlyIn(Dist.CLIENT)
-     public record Selector<T>(Predicate<BlockState> condition, T model) {
-         public <S> MultiPartModel.Selector<S> with(final S newModel) {
-@@ -122,7 +_,7 @@
-     public static class Unbaked implements BlockStateModel.UnbakedRoot {
-         private final List<MultiPartModel.Selector<BlockStateModel.Unbaked>> selectors;
-         private final ModelBaker.SharedOperationKey<MultiPartModel.SharedBakedState> sharedStateKey = new ModelBaker.SharedOperationKey<MultiPartModel.SharedBakedState>(
--            
-+
-         ) {
-             public MultiPartModel.SharedBakedState compute(final ModelBaker modelBakery) {
-                 Builder<MultiPartModel.Selector<BlockStateModel>> selectors = ImmutableList.builderWithExpectedSize(Unbaked.this.selectors.size());
