@@ -108,7 +108,7 @@
          this.minecraft
              .getSoundManager()
              .play(
-@@ -1248,6 +_,16 @@
+@@ -1248,6 +_,21 @@
          this.explosionTracker.track(center, radius, blockCount, blockParticles);
      }
  
@@ -120,6 +120,11 @@
 +    @Override
 +    public net.minecraftforge.client.model.data.ModelDataManager getModelDataManager() {
 +        return modelDataManager;
++    }
++
++    @Override
++    public net.minecraftforge.client.model.data.ModelData getModelData(BlockPos pos) {
++        return modelDataManager.getAtOrEmpty(pos);
 +    }
 +
      @OnlyIn(Dist.CLIENT)

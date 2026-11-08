@@ -7,7 +7,6 @@ package net.minecraftforge.client.model.data;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.SectionPos;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -30,6 +29,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * A manager for the lifecycle of all the {@link ModelData} instances in a {@link Level}.
  * <p>
  * Users should not be instantiating or using this themselves unless they know what they're doing.
+ * <p>
+ * This must only be used from the main client thread, as refreshing the model data accesses block entities.
+ * Meshing threads access a snapshot of the model data through {@link net.minecraft.world.level.BlockGetter#getModelData(BlockPos)}.
  */
 @ApiStatus.Internal
 @EventBusSubscriber(modid = "forge", bus = Bus.FORGE, value = Dist.CLIENT)
@@ -67,18 +69,9 @@ public class ModelDataManager {
         return getAt(ChunkPos.containing(pos)).get(pos);
     }
 
-    public ModelData getAtOrEmpty(double x, double y, double z) {
-        var ret = getAt(BlockPos.containing(x, y, z));
-        return ret == null ? ModelData.EMPTY : ret;
-    }
-
     public ModelData getAtOrEmpty(BlockPos pos) {
         var ret = getAt(pos);
         return ret == null ? ModelData.EMPTY : ret;
-    }
-
-    public Map<BlockPos, ModelData> getAt(SectionPos pos) {
-        return getAt(pos.chunk());
     }
 
     public Map<BlockPos, ModelData> getAt(ChunkPos pos) {

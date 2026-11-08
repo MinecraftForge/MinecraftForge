@@ -125,7 +125,7 @@ public interface IForgeBlockEntity extends ICapabilityProvider {
      * Allows you to return additional model data.
      * This data can be used to provide additional functionality in your {@link BakedModel}
      * You need to schedule a refresh of you model data via {@link #requestModelDataUpdate()} if the result of this function changes.
-     * <b>Note that this method may be called on a chunk render thread instead of the main client thread</b>
+     * This method is called on the main client thread, the resulting data is then made available to the chunk render threads.
      * @return Your model data
      */
      default @NotNull ModelData getModelData() {

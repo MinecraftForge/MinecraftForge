@@ -31,7 +31,7 @@ public interface IForgeBlockStateModel {
      * Outputs geometry for the given level context to the given list.
      * <p>
      * This method may be called from the main thread or from a meshing thread. As such, it is not inherently safe to directly access data
-     * from block entities. Block entity data can safely be requested from the level instance through {@link IForgeBlockGetter#getModelDataManager()}.
+     * from block entities. Block entity data can safely be requested from the level instance through {@link IForgeBlockGetter#getModelData(BlockPos)}.
      * This returns the model data obtained from {@link IForgeBlockEntity#getModelData()}.<br>
      * <p>
      * Note that the output {@link BlockStateModelPart}s must not maintain references to the level or objects in the level. Maintaining such

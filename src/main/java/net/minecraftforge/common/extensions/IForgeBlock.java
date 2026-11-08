@@ -38,6 +38,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.IPlantable;
 
@@ -790,6 +791,11 @@ public interface IForgeBlock {
      * <p>
      * Common implementors would be covers and facades, or any other mimic blocks that proxy another block's model.
      * Common consumers would be models with connected textures that wish to seamlessly connect to mimic blocks.
+     * <p>
+     * <b>Note that this method may be called on the server, or on any of the client's meshing threads.</b><br/>
+     * As such, if you need any data from your {@link BlockEntity}, you should put it in {@link ModelData} to guarantee
+     * safe concurrent access to it on the client, and read it through {@link BlockGetter#getModelData(BlockPos)}.<br/>
+     * On the server, where that method returns {@link ModelData#EMPTY}, it is safe to query your {@link BlockEntity} directly.
      *
      * @param state      The state of this block
      * @param level      The level this block is in
