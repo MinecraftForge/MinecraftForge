@@ -1632,6 +1632,12 @@ project(':forge') {
         }
     }
 
+    final mdkGradleWrapper = tasks.register('mdkGradleWrapper', Wrapper) {
+        gradleVersion = "9.8.2"
+        scriptFile = layout.buildDirectory.dir("wrapper/" + gradleVersion + "/gradlew")
+        jarFile = layout.buildDirectory.dir("wrapper/" + gradleVersion + "/gradle/wrapper/gradle-wrapper.jar")
+    }
+
     task makeMdk(type: Zip) {
         archiveBaseName = project.name
         archiveClassifier = 'mdk'
@@ -1641,8 +1647,9 @@ project(':forge') {
         from rootProject.file('gradlew')
         from rootProject.file('gradlew.bat')
         from extraTxts
-        from(rootProject.file('gradle/')){
-            into('gradle/')
+        into('gradle/wrapper/') {
+            from mdkGradleWrapper.map(Wrapper.&getJarFile)
+            from mdkGradleWrapper.map(Wrapper.&getPropertiesFile)
         }
         from(rootProject.file('mdk/')){
             rootProject.file('mdk/gitignore.txt').eachLine{
