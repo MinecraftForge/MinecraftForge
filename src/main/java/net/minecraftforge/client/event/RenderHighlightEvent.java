@@ -26,7 +26,7 @@ import org.jetbrains.annotations.ApiStatus;
  * @see Entity
  */
 @Cancelable
-public abstract class RenderHighlightEvent extends Event
+public abstract sealed class RenderHighlightEvent extends Event
 {
     private final LevelRenderer levelRenderer;
     private final Camera camera;
@@ -104,7 +104,7 @@ public abstract class RenderHighlightEvent extends Event
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
     @Cancelable
-    public static class Block extends RenderHighlightEvent
+    public static final class Block extends RenderHighlightEvent
     {
         @ApiStatus.Internal
         public Block(LevelRenderer levelRenderer, Camera camera, BlockHitResult target, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource)
@@ -130,7 +130,7 @@ public abstract class RenderHighlightEvent extends Event
      * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
      * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
      */
-    public static class Entity extends RenderHighlightEvent
+    public static final class Entity extends RenderHighlightEvent
     {
         @ApiStatus.Internal
         public Entity(LevelRenderer levelRenderer, Camera camera, EntityHitResult target, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource)

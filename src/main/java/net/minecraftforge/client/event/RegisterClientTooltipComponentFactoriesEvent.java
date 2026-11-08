@@ -26,7 +26,7 @@ import java.util.function.Function;
  * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
  * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  */
-public class RegisterClientTooltipComponentFactoriesEvent extends Event implements IModBusEvent
+public final class RegisterClientTooltipComponentFactoriesEvent extends Event implements IModBusEvent
 {
     private final Map<Class<? extends TooltipComponent>, Function<TooltipComponent, ClientTooltipComponent>> factories;
 

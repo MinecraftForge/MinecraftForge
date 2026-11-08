@@ -34,7 +34,7 @@ import org.jetbrains.annotations.ApiStatus;
  *  This also means that the two vanilla checks described above will not be called.
  */
 @Cancelable
-public class ItemStackedOnOtherEvent extends Event
+public final class ItemStackedOnOtherEvent extends Event
 {
     private final ItemStack carriedItem;
     private final ItemStack stackedOnItem;

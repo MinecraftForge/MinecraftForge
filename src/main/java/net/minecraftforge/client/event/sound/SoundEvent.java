@@ -23,7 +23,7 @@ import org.jetbrains.annotations.ApiStatus;
  * @see PlaySoundEvent
  * @see SoundEngineLoadEvent
  */
-public abstract class SoundEvent extends Event
+public abstract sealed class SoundEvent extends Event permits PlaySoundEvent, SoundEngineLoadEvent, SoundEvent.SoundSourceEvent
 {
     private final SoundEngine engine;
 
@@ -50,7 +50,7 @@ public abstract class SoundEvent extends Event
      * @see PlaySoundSourceEvent
      * @see PlayStreamingSourceEvent
      */
-    public static abstract class SoundSourceEvent extends SoundEvent
+    public static abstract sealed class SoundSourceEvent extends SoundEvent permits PlaySoundSourceEvent, PlayStreamingSourceEvent
     {
         private final SoundInstance sound;
         private final Channel channel;

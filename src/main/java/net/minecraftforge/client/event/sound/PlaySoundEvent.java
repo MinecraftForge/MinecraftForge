@@ -27,7 +27,7 @@ import org.jetbrains.annotations.Nullable;
  * @see PlaySoundSourceEvent
  * @see PlayStreamingSourceEvent
  */
-public class PlaySoundEvent extends SoundEvent
+public final class PlaySoundEvent extends SoundEvent
 {
     private final String name;
     private final SoundInstance originalSound;

@@ -20,7 +20,7 @@ import org.jetbrains.annotations.ApiStatus;
  * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
  * only on the {@linkplain LogicalSide#SERVER logical server}.</p>
  */
-public class TradeWithVillagerEvent extends PlayerEvent
+public final class TradeWithVillagerEvent extends PlayerEvent
 {
     private final MerchantOffer offer;
     private final AbstractVillager abstractVillager;

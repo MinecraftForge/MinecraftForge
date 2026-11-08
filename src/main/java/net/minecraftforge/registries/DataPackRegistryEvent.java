@@ -20,7 +20,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
-public class DataPackRegistryEvent extends Event implements IModBusEvent
+public sealed class DataPackRegistryEvent extends Event implements IModBusEvent
 {
     @ApiStatus.Internal
     public DataPackRegistryEvent() {}

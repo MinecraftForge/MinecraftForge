@@ -57,7 +57,7 @@ public class ChunkEvent extends LevelEvent
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      **/
-    public static class Load extends ChunkEvent
+    public static final class Load extends ChunkEvent
     {
         private final boolean newChunk;
 

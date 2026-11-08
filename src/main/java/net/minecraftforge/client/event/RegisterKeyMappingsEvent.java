@@ -23,7 +23,7 @@ import org.jetbrains.annotations.ApiStatus;
  * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
  * only on the {@linkplain LogicalSide#CLIENT logical client}.</p>
  */
-public class RegisterKeyMappingsEvent extends Event implements IModBusEvent
+public final class RegisterKeyMappingsEvent extends Event implements IModBusEvent
 {
     private final Options options;
 
