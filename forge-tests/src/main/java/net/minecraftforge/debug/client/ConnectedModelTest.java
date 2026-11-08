@@ -10,13 +10,19 @@ import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.client.renderer.block.dispatch.WeightedVariants;
+import net.minecraft.client.renderer.block.dispatch.multipart.MultiPartModel;
+import net.minecraft.client.resources.model.ModelBaker;
+import net.minecraft.client.resources.model.ResolvableModel;
+import net.minecraft.client.resources.model.ResolvedModel;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.client.resources.model.sprite.Material;
+import net.minecraft.client.resources.model.sprite.MaterialBaker;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.random.WeightedList;
 import net.minecraft.world.item.BlockItem;
@@ -161,6 +167,20 @@ public class ConnectedModelTest extends BaseTestMod {
         helper.succeed();
     }
 
+    @GameTest
+    public static void multipart_passes_context(GameTestHelper helper) {
+        // MultiPartModel forwards the level context to each of the models it selects
+        var model = connectedModel(helper);
+        var state = CONNECTED_BLOCK.get().defaultBlockState();
+        var selector = new MultiPartModel.Selector<BlockStateModel.Unbaked>(_ -> true, new PrebakedModel(model));
+        var multipart = new MultiPartModel.Unbaked(List.of(selector, selector)).bake(state, new TestBaker());
+        var level = new TestLevel(Map.of(POS.above(), state), Map.of());
+        var expected = collect(model.connected());
+        expected.addAll(collect(model.connected()));
+        helper.assertValueEqual(expected, collect(multipart, level), Component.literal("Parts of multipart model"));
+        helper.succeed();
+    }
+
     private static ConnectedModel connectedModel(GameTestHelper helper) {
         var model = Minecraft.getInstance().getModelManager().getBlockStateModelSet().get(CONNECTED_BLOCK.get().defaultBlockState());
         if (model instanceof ConnectedModel connected)
@@ -251,6 +271,44 @@ public class ConnectedModelTest extends BaseTestMod {
         @Override
         public @BakedQuad.MaterialFlags int materialFlags() {
             return this.regular.materialFlags() | this.connected.materialFlags();
+        }
+    }
+
+    private record PrebakedModel(BlockStateModel model) implements BlockStateModel.Unbaked {
+        @Override
+        public BlockStateModel bake(ModelBaker modelBakery) {
+            return this.model;
+        }
+
+        @Override
+        public void resolveDependencies(ResolvableModel.Resolver resolver) {
+        }
+    }
+
+    private static class TestBaker implements ModelBaker {
+        @Override
+        public <T> T compute(ModelBaker.SharedOperationKey<T> key) {
+            return key.compute(this);
+        }
+
+        @Override
+        public ResolvedModel getModel(Identifier location) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public BlockStateModelPart missingBlockModelPart() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public MaterialBaker materials() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public ModelBaker.Interner interner() {
+            throw new UnsupportedOperationException();
         }
     }
 
