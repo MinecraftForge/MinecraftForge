@@ -10,7 +10,7 @@
              try {
                  Vec3 offset = blockState.getOffset(pos);
 -                if (this.ambientOcclusion && blockState.getLightEmission() == 0 && this.parts.getFirst().useAmbientOcclusion()) {
-+                if (this.ambientOcclusion && blockState.getLightEmission() == 0 && ((BlockStateModelPart)this.parts.getFirst()).useAmbientOcclusion()) {
++                if (this.ambientOcclusion && blockState.getLightEmission(level, pos) == 0 && this.parts.getFirst().useAmbientOcclusion()) {
                      this.tesselateAmbientOcclusion(output, x + (float)offset.x, y + (float)offset.y, z + (float)offset.z, this.parts, level, blockState, pos);
                  } else {
                      this.tesselateFlat(output, x + (float)offset.x, y + (float)offset.y, z + (float)offset.z, this.parts, level, blockState, pos);
