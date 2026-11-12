@@ -32,6 +32,7 @@ public class StronglyConnectedComponentDetector<T> {
     private int[] stack;
     private int top;
     private BitSet onStack;
+    private int counter;
     private Set<Set<T>> components;
 
     public StronglyConnectedComponentDetector(Graph<T> graph) {
@@ -63,27 +64,28 @@ public class StronglyConnectedComponentDetector<T> {
         stack = new int[n];
         onStack = new BitSet(n);
         top = -1;
+        counter = 0;
         for (int i = 0; i < n; i++) {
             if (dfn[i] == 0) {
-                dfs(i, 1);
+                dfs(i);
             }
         }
     }
 
-    private void dfs(int now, int depth) {
-        dfn[now] = depth;
-        low[now] = depth;
+    private void dfs(int now) {
+        dfn[now] = low[now] = ++counter;
         top++;
         stack[top] = now;
         onStack.set(now);
         for (T each : graph.successors(elements[now])) {
             int to = ids.get(each);
             if (dfn[to] != 0) {
-                if (low[now] > dfn[to]) {
+                // Nodes whose component is already complete cannot be part of a cycle with this one.
+                if (onStack.get(to) && low[now] > dfn[to]) {
                     low[now] = dfn[to];
                 }
             } else {
-                dfs(to, depth + 1);
+                dfs(to);
                 if (low[now] > low[to]) {
                     low[now] = low[to];
                 }
