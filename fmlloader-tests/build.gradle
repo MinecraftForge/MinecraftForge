@@ -12,3 +12,7 @@ dependencies {
     testImplementation(libs.junit.api)
     testRuntimeOnly(libs.bundles.junit.runtime)
 }
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
