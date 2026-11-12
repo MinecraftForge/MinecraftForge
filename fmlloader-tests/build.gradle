@@ -1,0 +1,14 @@
+plugins {
+    id 'net.minecraftforge.forge.build.convention'
+    id 'jvm-test-suite'
+}
+
+gradleutils.displayName = 'FMLLoader-Tests'
+description = 'JUnit tests for FMLLoader, not meant for distribution'
+
+dependencies {
+    testImplementation(project(':fmlloader'))
+    testImplementation(libs.guava)
+    testImplementation(libs.junit.api)
+    testRuntimeOnly(libs.bundles.junit.runtime)
+}

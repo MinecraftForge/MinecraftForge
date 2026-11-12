@@ -1,8 +1,6 @@
 import net.minecraftforge.forgedev.legacy.tasks.JarJarMetadataOptions
-import org.gradle.api.plugins.jvm.JvmTestSuite
 
 plugins {
-    id 'jvm-test-suite'
     id 'net.minecraftforge.forge.build.convention'
     alias libs.plugins.apt
 }
@@ -36,13 +34,6 @@ dependencies {
     // Needed because we have a custom log4j plugin, and they removed package scanning and require a data file to be generated
     implementation(libs.log4j.core        ){ transitive = false }
     annotationProcessor(libs.bundles.log4j){ transitive = false }
-}
-
-testing.suites.named('test', JvmTestSuite) {
-    dependencies {
-        compileOnly libs.jetbrains.annotations
-        runtimeOnly libs.bootstrap
-    }
 }
 
 convention.manifest('net/minecraftforge/fml/loading/', [

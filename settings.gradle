@@ -18,6 +18,7 @@ plugins {
 rootProject.name = 'forge'
 
 include 'fmlloader'
+include 'fmlloader-tests'
 include 'fmlcore'
 include 'mclanguage'
 include 'javafmllanguage'
