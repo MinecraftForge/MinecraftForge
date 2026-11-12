@@ -128,14 +128,14 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag> {
 
     /**
      * Called after the entity has been added to the world's
-     * ticking list. Can be overriden, but needs to call super
+     * ticking list. Can be overridden, but needs to call super
      * to prevent MC-136995.
      */
     void onAddedToLevel();
 
     /**
      * Called after the entity has been removed to the world's
-     * ticking list. Can be overriden, but needs to call super
+     * ticking list. Can be overridden, but needs to call super
      * to prevent MC-136995.
      */
     void onRemovedFromLevel();

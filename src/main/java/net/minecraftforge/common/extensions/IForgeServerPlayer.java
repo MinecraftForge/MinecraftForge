@@ -28,7 +28,6 @@ public interface IForgeServerPlayer {
      * Refer to {@link ConfigScreenHandler.ConfigScreenFactory} for how to provide a function to consume
      * these GUI requests on the client.
      *
-     * @param player The player to open the GUI for
      * @param containerSupplier A supplier of container properties including the registry name of the container
      * @param pos A block pos, which will be encoded into the auxillary data for this request
      */
@@ -44,7 +43,6 @@ public interface IForgeServerPlayer {
      *
      * The maximum size for #extraDataWriter is 32600 bytes.
      *
-     * @param player The player to open the GUI for
      * @param containerSupplier A supplier of container properties including the registry name of the container
      * @param extraDataWriter Consumer to write any additional data the GUI needs
      */
