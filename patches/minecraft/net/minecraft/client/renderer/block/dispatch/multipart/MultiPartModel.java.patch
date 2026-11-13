@@ -4,10 +4,10 @@
      }
  
      @Override
-+    public Material.Baked particleMaterial(net.minecraftforge.client.model.data.ModelData data) {
++    public Material.Baked particleMaterial(net.minecraft.client.renderer.block.BlockAndTintGetter level, net.minecraft.core.BlockPos pos, BlockState state) {
 +        if (this.models == null)
 +            this.models = this.shared.selectModels(this.blockState);
-+        return this.models.getFirst().particleMaterial(data);
++        return this.models.getFirst().particleMaterial(level, pos, state);
 +    }
 +
 +    @Override
@@ -17,11 +17,11 @@
  
      @Override
      public void collectParts(final RandomSource random, final List<BlockStateModelPart> output) {
-+        collectParts(random, output, net.minecraftforge.client.model.data.ModelData.EMPTY);
++        this.collectParts(net.minecraft.client.renderer.block.BlockAndTintGetter.EMPTY, net.minecraft.core.BlockPos.ZERO, this.blockState, random, output);
 +    }
 +
 +    @Override
-+    public void collectParts(final RandomSource random, final List<BlockStateModelPart> output, net.minecraftforge.client.model.data.ModelData data) {
++    public void collectParts(net.minecraft.client.renderer.block.BlockAndTintGetter level, net.minecraft.core.BlockPos pos, BlockState state, RandomSource random, List<BlockStateModelPart> output) {
          if (this.models == null) {
              this.models = this.shared.selectModels(this.blockState);
          }
@@ -30,7 +30,7 @@
          for (BlockStateModel model : this.models) {
              random.setSeed(seed);
 -            model.collectParts(random, output);
-+            model.collectParts(random, output, data);
++            model.collectParts(level, pos, state, random, output);
          }
      }
  

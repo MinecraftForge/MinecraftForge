@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:function",
+  "environment": "minecraft:default",
+  "function": "forge:connected_model/connects_from_model_data",
+  "max_ticks": 100,
+  "structure": "forge:empty3x3x3"
+}

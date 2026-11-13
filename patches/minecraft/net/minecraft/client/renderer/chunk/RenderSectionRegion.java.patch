@@ -1,12 +1,14 @@
 --- a/net/minecraft/client/renderer/chunk/RenderSectionRegion.java
 +++ b/net/minecraft/client/renderer/chunk/RenderSectionRegion.java
-@@ -93,4 +_,9 @@
+@@ -93,4 +_,11 @@
      public static int index(final int minSectionX, final int minSectionY, final int minSectionZ, final int sectionX, final int sectionY, final int sectionZ) {
          return sectionX - minSectionX + (sectionY - minSectionY) * 3 + (sectionZ - minSectionZ) * 3 * 3;
      }
 +
 +    @Override
-+    public net.minecraftforge.client.model.data.ModelDataManager getModelDataManager() {
-+       return level.getModelDataManager();
++    public net.minecraftforge.client.model.data.ModelData getModelData(final BlockPos pos) {
++        return this.getSection(
++            SectionPos.blockToSectionCoord(pos.getX()), SectionPos.blockToSectionCoord(pos.getY()), SectionPos.blockToSectionCoord(pos.getZ())
++        ).getModelData(pos);
 +    }
  }

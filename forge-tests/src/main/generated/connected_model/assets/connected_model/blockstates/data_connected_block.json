@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "connected=false": {
+      "model": "minecraft:block/stone_bricks"
+    },
+    "connected=true": {
+      "model": "minecraft:block/gold_block"
+    }
+  }
+}
