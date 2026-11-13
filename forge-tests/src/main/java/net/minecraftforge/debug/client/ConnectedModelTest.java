@@ -6,6 +6,10 @@
 package net.minecraftforge.debug.client;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.data.models.BlockModelGenerators;
+import net.minecraft.client.data.models.ItemModelGenerators;
+import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
+import net.minecraft.client.data.models.model.ModelLocationUtils;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
@@ -20,6 +24,7 @@ import net.minecraft.client.resources.model.sprite.MaterialBaker;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.data.PackOutput;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -43,6 +48,7 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.client.model.data.ModelProperty;
+import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -57,6 +63,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
 /**
  * Demonstrates a model that changes its appearance based on its surroundings, like connected textures do.
@@ -92,6 +99,7 @@ public class ConnectedModelTest extends BaseTestMod {
         this.testItem(_ -> DATA_CONNECTED_ITEM.get().getDefaultInstance());
         BuildCreativeModeTabContentsEvent.BUS.addListener(this::onCreativeModeTabBuildContents);
         ModelEvent.ModifyBakingResult.BUS.addListener(this::onModifyBakingResult);
+        GatherDataEvent.getBus(this.modBus).addListener(this::onGatherData);
     }
 
     private void onModifyBakingResult(ModelEvent.ModifyBakingResult event) {
@@ -100,6 +108,10 @@ public class ConnectedModelTest extends BaseTestMod {
             var state = block.defaultBlockState();
             models.put(state, new ConnectedModel(models.get(state), models.get(state.setValue(CONNECTED, true))));
         }
+    }
+
+    private void onGatherData(GatherDataEvent event) {
+        event.getGenerator().addProvider(event.includeClient(), new ModelProvider(event.getGenerator().getPackOutput()));
     }
 
     @GameTest
@@ -282,6 +294,47 @@ public class ConnectedModelTest extends BaseTestMod {
 
         @Override
         public void resolveDependencies(ResolvableModel.Resolver resolver) {
+        }
+    }
+
+    private static class ModelProvider extends net.minecraft.client.data.models.ModelProvider {
+        private ModelProvider(PackOutput output) {
+            super(output);
+        }
+
+        @Override
+        protected Stream<Block> getKnownBlocks() {
+            return Stream.of(CONNECTED_BLOCK.get(), DATA_CONNECTED_BLOCK.get());
+        }
+
+        @Override
+        protected Stream<Item> getKnownItems() {
+            return Stream.of(CONNECTED_ITEM.get(), DATA_CONNECTED_ITEM.get());
+        }
+
+        @Override
+        protected BlockModelGenerators getBlockModelGenerators(BlockStateGeneratorCollector blocks, ItemInfoCollector items, SimpleModelCollector models) {
+            return new BlockModelGenerators(blocks, items, models) {
+                @Override
+                public void run() {
+                    var regular = ModelLocationUtils.getModelLocation(Blocks.STONE_BRICKS);
+                    var connected = ModelLocationUtils.getModelLocation(Blocks.GOLD_BLOCK);
+                    for (var block : List.of(CONNECTED_BLOCK.get(), DATA_CONNECTED_BLOCK.get())) {
+                        this.blockStateOutput.accept(MultiVariantGenerator.dispatch(block).with(createBooleanModelDispatch(CONNECTED, plainVariant(connected), plainVariant(regular))));
+                        this.registerSimpleItemModel(block, regular);
+                    }
+                }
+            };
+        }
+
+        @Override
+        protected ItemModelGenerators getItemModelGenerators(ItemInfoCollector items, SimpleModelCollector models) {
+            return new ItemModelGenerators(items, models) {
+                @Override
+                public void run() {
+                    // The item models are already registered together with the blocks
+                }
+            };
         }
     }
 
