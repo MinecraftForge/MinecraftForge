@@ -34,11 +34,10 @@
                  BlockEntityRenderState state = this.levelRenderer
                      .blockEntityRenderDispatcher()
                      .tryExtractRenderState(blockEntity, deltaPartialTick, null, true);
-@@ -369,13 +_,23 @@
+@@ -369,13 +_,22 @@
          double camZ = cameraPos.z();
          levelRenderState.blockBreakingRenderStates.clear();
  
-+        List<net.minecraft.client.renderer.block.dispatch.BlockStateModelPart> parts = new java.util.ArrayList<>();
 +        var random = net.minecraft.util.RandomSource.createThreadLocalInstance();
 +        var blockStateModels = this.minecraft.getModelManager().getBlockStateModelSet();
 +
@@ -52,10 +51,10 @@
 +                    // Forge: Part collection is moved from `LevelRenderer#submitBlockDestroyAnimation` to extraction stage to provide level context to the model
 +                    BlockState state = this.level.getBlockState(pos);
 +                    BlockStateModel model = blockStateModels.get(state);
++                    List<net.minecraft.client.renderer.block.dispatch.BlockStateModelPart> parts = new java.util.ArrayList<>();
 +                    random.setSeed(state.getSeed(pos));
 +                    model.collectParts(this.level, pos, state, random, parts);
-+                    levelRenderState.blockBreakingRenderStates.add(new BlockBreakingRenderState(pos, state, progress, List.copyOf(parts)));
-+                    parts.clear();
++                    levelRenderState.blockBreakingRenderStates.add(new BlockBreakingRenderState(pos, state, progress, parts));
                  }
              }
          }
