@@ -1,5 +1,13 @@
 --- a/net/minecraft/client/renderer/extract/LevelExtractor.java
 +++ b/net/minecraft/client/renderer/extract/LevelExtractor.java
+@@ -83,6 +_,7 @@
+ @OnlyIn(Dist.CLIENT)
+ public class LevelExtractor implements ResourceManagerReloadListener {
+     private static final float CHUNK_VISIBILITY_THRESHOLD = 0.3F;
++    private static final net.minecraft.util.RandomSource BREAKING_RANDOM = net.minecraft.util.RandomSource.create(); // Forge: Used to collect the parts for the block breaking animation
+     private final Minecraft minecraft;
+     private final LevelRenderer levelRenderer;
+     private @Nullable ClientLevel level;
 @@ -188,7 +_,7 @@
          profiler.popPush("entities");
          this.extractVisibleEntities(camera, cullFrustum, deltaTracker, this.levelRenderState);
@@ -34,11 +42,10 @@
                  BlockEntityRenderState state = this.levelRenderer
                      .blockEntityRenderDispatcher()
                      .tryExtractRenderState(blockEntity, deltaPartialTick, null, true);
-@@ -369,13 +_,22 @@
+@@ -369,13 +_,21 @@
          double camZ = cameraPos.z();
          levelRenderState.blockBreakingRenderStates.clear();
  
-+        var random = net.minecraft.util.RandomSource.createThreadLocalInstance();
 +        var blockStateModels = this.minecraft.getModelManager().getBlockStateModelSet();
 +
          for (Entry<SortedSet<BlockDestructionProgress>> entry : this.level.destructionProgress().long2ObjectEntrySet()) {
@@ -52,8 +59,8 @@
 +                    BlockState state = this.level.getBlockState(pos);
 +                    BlockStateModel model = blockStateModels.get(state);
 +                    List<net.minecraft.client.renderer.block.dispatch.BlockStateModelPart> parts = new java.util.ArrayList<>();
-+                    random.setSeed(state.getSeed(pos));
-+                    model.collectParts(this.level, pos, state, random, parts);
++                    BREAKING_RANDOM.setSeed(state.getSeed(pos));
++                    model.collectParts(this.level, pos, state, BREAKING_RANDOM, parts);
 +                    levelRenderState.blockBreakingRenderStates.add(new BlockBreakingRenderState(pos, state, progress, parts));
                  }
              }
