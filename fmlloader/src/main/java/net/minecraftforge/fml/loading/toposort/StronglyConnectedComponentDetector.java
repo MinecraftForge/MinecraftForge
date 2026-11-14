@@ -22,15 +22,18 @@ import java.util.Set;
  *
  * <p>This detector evaluates the graph lazily and won't reflect the modifications in the
  * graph after initial evaluation.
+ *
+ * <p> Implementation based on <a href="https://en.wikipedia.org/w/index.php?title=Tarjan%27s_strongly_connected_components_algorithm&oldid=1384955226">Wikipedia Psudocode</a>
  */
 public class StronglyConnectedComponentDetector<T> {
     private final Graph<T> graph;
     private final Map<T, Integer> ids = new HashMap<>();
     private T[] elements;
-    private int[] dfn;
-    private int[] low;
+    private int[] indexes;
+    private int[] lowlinks;
     private int[] stack;
     private int top;
+    private int index;
     private BitSet onStack;
     private Set<Set<T>> components;
 
@@ -58,48 +61,43 @@ public class StronglyConnectedComponentDetector<T> {
         }
 
         final int n = nodes.size();
-        dfn = new int[n];
-        low = new int[n];
+        indexes = new int[n];
+        lowlinks = new int[n];
         stack = new int[n];
         onStack = new BitSet(n);
         top = -1;
+        index = 1;
         for (int i = 0; i < n; i++) {
-            if (dfn[i] == 0) {
-                dfs(i, 1);
-            }
+            if (indexes[i] == 0)
+                dfs(i);
         }
     }
 
-    private void dfs(int now, int depth) {
-        dfn[now] = depth;
-        low[now] = depth;
-        top++;
-        stack[top] = now;
+    private void dfs(int now) {
+        indexes[now] = lowlinks[now] = index++;
+        stack[++top] = now;
         onStack.set(now);
+
         for (T each : graph.successors(elements[now])) {
             int to = ids.get(each);
-            if (dfn[to] != 0) {
-                if (low[now] > dfn[to]) {
-                    low[now] = dfn[to];
-                }
-            } else {
-                dfs(to, depth + 1);
-                if (low[now] > low[to]) {
-                    low[now] = low[to];
-                }
+            if (indexes[to] == 0) { // 0 is unvisited
+                dfs(to);
+                if (lowlinks[now] > lowlinks[to])
+                    lowlinks[now] = lowlinks[to];
+            } else if (onStack.get(to)) {
+                if (lowlinks[now] > indexes[to])
+                    lowlinks[now] = indexes[to];
             }
         }
 
-        if (dfn[now] == low[now]) {
+        if (indexes[now] == lowlinks[now]) {
             Set<T> component = new HashSet<>();
             while (top >= 0) {
-                final int t = stack[top];
-                component.add(elements[t]);
-                onStack.clear(t);
-                top--;
-                if (t == now) {
+                final int w = stack[top--];
+                onStack.clear(w);
+                component.add(elements[w]);
+                if (w == now)
                     break;
-                }
             }
             components.add(component);
         }

@@ -24,6 +24,7 @@ jarjar       = "0.4.2"
 log4j        = "2.26.0"
 lwjgl        = "3.4.3"
 gradle       = "9.7.1" # Gradle we bundle with the MDK
+junit        = "6.1.3"
 
 [libraries]
 # TODO [Forge][Buildscript We should not be needing to manually add transitive dependencies
@@ -106,6 +107,12 @@ lwjgl-opengl   = { module = "org.lwjgl:lwjgl-opengl", version.ref = "lwjgl" }
 lwjgl-stb      = { module = "org.lwjgl:lwjgl-stb",    version.ref = "lwjgl" }
 lwjgl-tinyfd   = { module = "org.lwjgl:lwjgl-tinyfd", version.ref = "lwjgl" }
 
+
+junit-api      = { module = "org.junit.jupiter:junit-jupiter-api",        version.ref = "junit" }
+junit-engine   = { module = "org.junit.jupiter:junit-jupiter-engine",     version.ref = "junit" }
+junit-platform = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit" }
+
+
 [bundles]
 # Google's InMemory File System. Used by ForgeDev Tests for now, but could be useful for a lot of things.
 jimfs                   = ["guava", "failureaccess"]
@@ -123,3 +130,4 @@ night-config            = ["night-config-toml", "night-config-core"]
 jarjar                  = ["jarjar-fs", "jarjar-selector", "jarjar-meta"]
 log4j                   = ["log4j-api", "log4j-core"]
 lwjgl                   = ["lwjgl", "lwjgl-sdl", "lwjgl-opengl", "lwjgl-stb", "lwjgl-tinyfd"]
+junit-runtime           = ["junit-engine", "junit-platform"]
