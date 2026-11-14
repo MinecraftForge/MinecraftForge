@@ -213,7 +213,7 @@ public final class ForgeBiomeModifiers {
      * <p>Stock biome modifier that removes mob spawns from a biome. Has the following json format:</p>
      * <pre>
      * {
-     *   "type": "forge:add_spawns", // Required
+     *   "type": "forge:remove_spawns", // Required
      *   "biomes": "#namespace:biome_tag", // Accepts a biome id, [list of biome ids], or #namespace:biome_tag
      *   "entity_types": #namespace:entitytype_tag // Accepts an entity type, [list of entity types], or #namespace:entitytype_tag
      * }
@@ -234,8 +234,12 @@ public final class ForgeBiomeModifiers {
             if (phase == Phase.REMOVE && this.biomes.contains(biome)) {
                 var spawns = get(builder);
                 if (spawns != null) {
-                    for (var category : MobCategory.values())
-                        spawns.getSpawner(category).removeIf(data -> this.entityTypes.contains(ForgeRegistries.ENTITY_TYPES.getHolder(data.type()).orElseThrow()));
+                    for (var category : spawns.getSpawnerTypes()) {
+                        var newSpawns =
+                                spawns.getSpawner(category).removeIf(data -> this.entityTypes.contains(ForgeRegistries.ENTITY_TYPES.getHolder(data.type()).orElseThrow()));
+                        spawns.noSpawns(category);
+                        spawns.addAllSpawns(category, newSpawns.build());
+                    }
                     set(builder, spawns);
                 }
             }
