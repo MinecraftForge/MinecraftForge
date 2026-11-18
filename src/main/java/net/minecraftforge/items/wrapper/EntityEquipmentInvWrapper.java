@@ -34,7 +34,7 @@ public abstract class EntityEquipmentInvWrapper implements IItemHandlerModifiabl
 
     /**
      * @param entity   The entity.
-     * @param slotType The slot type to expose.
+     * @param mainType The slot type to expose.
      */
     public EntityEquipmentInvWrapper(final LivingEntity entity, final EquipmentSlot.Type mainType) {
         this(entity, mainType, (EquipmentSlot.Type[])null);

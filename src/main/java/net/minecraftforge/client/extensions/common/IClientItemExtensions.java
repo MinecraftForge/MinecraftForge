@@ -93,7 +93,7 @@ public interface IClientItemExtensions {
      * @param equipmentSlot The slot the item is in
      * @param original      The original armor model. Will have attributes set.
      * @return A HumanoidModel to be rendered. Relevant properties are to be copied over by the caller.
-     * @see #getGenericArmorModel(LivingEntity, ItemStack, EquipmentSlot, HumanoidModel)
+     * @see #getGenericArmorModel(HumanoidRenderState, ItemStack, EquipmentSlot, HumanoidModel)
      */
     @NotNull
     default HumanoidModel<?> getHumanoidArmorModel(LivingEntityRenderState state, ItemStack itemStack, EquipmentSlot equipmentSlot, HumanoidModel<?> original) {
@@ -107,7 +107,7 @@ public interface IClientItemExtensions {
      * <p>
      * If you override this method you are responsible for copying any properties you care about from the original model.
      *
-     * @param livingEntity  The entity wearing the armor
+     * @param state         The entity wearing the armor
      * @param itemStack     The item stack
      * @param equipmentSlot The slot the item is in
      * @param original      The original armor model. Will have attributes set.

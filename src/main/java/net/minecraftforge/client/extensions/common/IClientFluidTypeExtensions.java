@@ -135,8 +135,8 @@ public interface IClientFluidTypeExtensions {
      * Renders {@code #getRenderOverlayTexture} onto the camera when within
      * the fluid.
      *
-     * @param mc        the client instance
-     * @param poseStack the transformations representing the current rendering position
+     * @param mc    the client instance
+     * @param state the render state of the player the camera is within the fluid for
      */
     default @Nullable IRenderCallback renderOverlay(Minecraft mc, PlayerRenderState state) {
         Identifier texture = this.getRenderOverlayTexture(mc);

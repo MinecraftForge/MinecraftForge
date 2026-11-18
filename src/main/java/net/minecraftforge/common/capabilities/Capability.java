@@ -15,7 +15,7 @@ import java.util.function.Consumer;
 /**
  * This is the core holder object Capabilities.
  * Each capability will have ONE instance of this class,
- * and it will the the one passed into the ICapabilityProvider functions.
+ * and it will be the one passed into the ICapabilityProvider functions.
  *
  * The CapabilityManager is in charge of creating this class.
  */

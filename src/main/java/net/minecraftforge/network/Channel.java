@@ -86,7 +86,7 @@ public abstract class Channel<MSG> {
      * </pre>
      *
      * @param target The curried target from a PacketDistributor
-     * @param message The message to send
+     * @param msg The message to send
      * @param <MSG> The type of the message
      */
     public void send(MSG msg, PacketDistributor.PacketTarget target) {

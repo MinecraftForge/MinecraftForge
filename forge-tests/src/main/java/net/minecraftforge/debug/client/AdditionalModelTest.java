@@ -97,7 +97,7 @@ public class AdditionalModelTest extends BaseTestMod {
         var key = rl("pig_head");
         var model = manager.getItemModel(key);
         if (model == null)
-            helper.fail("Failed to retreive " + key + " item model");
+            helper.fail("Failed to retrieve " + key + " item model");
 
         if (model == manager.getMissingModel())
             helper.fail("Itme Model was the missing model");
@@ -110,7 +110,7 @@ public class AdditionalModelTest extends BaseTestMod {
         var manager = Minecraft.getInstance().getModelManager();
 
         var model = manager.getBlockStateModelSet().get(COW_HEAD_STATE.any());
-        helper.assertValueNotEqual(manager.getBlockStateModelSet().missingModel(), model, MODID, "Failed to retreive block model");
+        helper.assertValueNotEqual(manager.getBlockStateModelSet().missingModel(), model, MODID, "Failed to retrieve block model");
 
         helper.succeed();
     }

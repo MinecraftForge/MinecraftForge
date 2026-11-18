@@ -19,7 +19,7 @@ import java.lang.annotation.Target;
 public @interface GameTestNamespace {
     /**
      * The default namespace for all tests in this class that do not manually specify one.
-     * It it recommended that this is your modid, but if you have multiple test mods that
+     * It is recommended that this is your modid, but if you have multiple test mods that
      * you want to group together you can use this to do so.
      * <p>
      * This will default to your modid if it is on the same class that is annotated with {@link net.minecraftforge.fml.common.Mod @Mod}
