@@ -440,7 +440,7 @@ public class DisplayWindow implements ImmediateWindowProvider {
             if (window == 0) {
                 var error = Objects.requireNonNullElse(SDLError.SDL_GetError(), "<no error>");
                 attempts.add(new Attempt(requestedVersion, error));
-                LOGGER.trace("Failed to create window using %d.%d: %s", version[0], version[1], error);
+                LOGGER.trace("Failed to create window using {}.{}: {}", version[0], version[1], error);
             } else {
                 SDLVideo.SDL_SetWindowMinimumSize(window, 320, 240);
                 LOGGER.info("Created window using SDL video driver: {}", SDLVideo.SDL_GetCurrentVideoDriver());
