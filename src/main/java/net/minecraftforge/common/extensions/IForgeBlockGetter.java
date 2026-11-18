@@ -11,6 +11,7 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.*;
+import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.client.model.data.ModelDataManager;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,11 +52,25 @@ public interface IForgeBlockGetter
 
     /**
      * Retrieves the model data manager for this level.
-     * This will be {@code null} on a server level.
+     * This will be {@code null} on a server level, and on the copies of a client level which are used by the meshing threads.
+     * <p>
+     * The manager must only be used from the main client thread. Use {@link #getModelData(BlockPos)} to access the model data itself.
      */
     @Nullable
     default ModelDataManager getModelDataManager()
     {
         return null;
+    }
+
+    /**
+     * Retrieves the {@link ModelData} provided by the block entity at the given position.
+     * <p>
+     * Unlike the block entity itself, this data can safely be accessed from a client meshing thread.
+     *
+     * @return the model data at the given position, or {@link ModelData#EMPTY} if there is none or this is not a client level
+     */
+    default ModelData getModelData(BlockPos pos)
+    {
+        return ModelData.EMPTY;
     }
 }

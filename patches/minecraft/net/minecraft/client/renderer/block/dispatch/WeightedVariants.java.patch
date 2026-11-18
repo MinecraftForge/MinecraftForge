@@ -18,8 +18,8 @@
      }
  
      @Override
-+    public Material.Baked particleMaterial(net.minecraftforge.client.model.data.ModelData data) {
-+        return this.first.particleMaterial(data);
++    public Material.Baked particleMaterial(net.minecraft.client.renderer.block.BlockAndTintGetter level, net.minecraft.core.BlockPos pos, net.minecraft.world.level.block.state.BlockState state) {
++        return this.first.particleMaterial(level, pos, state);
 +    }
 +
 +    @Override
@@ -33,8 +33,8 @@
 +    }
 +
 +    @Override
-+    public void collectParts(final RandomSource random, final List<BlockStateModelPart> output, net.minecraftforge.client.model.data.ModelData data) {
-+        this.list.getRandomOrThrow(random).collectParts(random, output, data);
++    public void collectParts(net.minecraft.client.renderer.block.BlockAndTintGetter level, net.minecraft.core.BlockPos pos, net.minecraft.world.level.block.state.BlockState state, RandomSource random, List<BlockStateModelPart> output) {
++        this.list.getRandomOrThrow(random).collectParts(level, pos, state, random, output);
      }
  
      @OnlyIn(Dist.CLIENT)

@@ -1,0 +1,28 @@
+--- a/net/minecraft/client/renderer/chunk/SectionCopy.java
++++ b/net/minecraft/client/renderer/chunk/SectionCopy.java
+@@ -22,6 +_,7 @@
+ @OnlyIn(Dist.CLIENT)
+ public class SectionCopy {
+     private final Map<BlockPos, BlockEntity> blockEntities;
++    private final Map<BlockPos, net.minecraftforge.client.model.data.ModelData> modelData;
+     private final @Nullable PalettedContainer<BlockState> section;
+     private final boolean debug;
+     private final LevelHeightAccessor levelHeightAccessor;
+@@ -30,6 +_,7 @@
+         this.levelHeightAccessor = levelChunk;
+         this.debug = levelChunk.getLevel().isDebug();
+         this.blockEntities = ImmutableMap.copyOf(levelChunk.getBlockEntities());
++        this.modelData = ImmutableMap.copyOf(levelChunk.getLevel().getModelDataManager().getAt(levelChunk.getPos()));
+         if (levelChunk instanceof EmptyLevelChunk) {
+             this.section = null;
+         } else {
+@@ -76,5 +_,9 @@
+                 throw new ReportedException(report);
+             }
+         }
++    }
++
++    public net.minecraftforge.client.model.data.ModelData getModelData(final BlockPos pos) {
++        return this.modelData.getOrDefault(pos, net.minecraftforge.client.model.data.ModelData.EMPTY);
+     }
+ }
