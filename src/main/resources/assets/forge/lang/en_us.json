@@ -185,6 +185,8 @@
   "forge.configgui.showLoadWarnings": "Show Load Warnings",
   "forge.configgui.allowMipmapLowering.tooltip": "When enabled, Forge will allow mipmaps to be lowered in real-time. This is the default behavior in vanilla. Use this if you experience issues with resource packs that use textures lower than 8x8.",
   "forge.configgui.allowMipmapLowering": "Allow mipmap lowering",
+  "forge.configgui.mipmapUpscalingMethod.tooltip": "Which upscaling algorithm to use",
+  "forge.configgui.mipmapUpscalingMethod": "If allowMipmapLowering is set to false, which upscaling algorithm will be used to fix undersized textures.",
 
   "forge.configgui.disableVersionCheck.tooltip": "Set to true to disable Forge version check mechanics. Forge queries a small json file on our server for version information. For more details see the ForgeVersion class in our github.",
   "forge.configgui.disableVersionCheck": "Disable Forge Version Check",
