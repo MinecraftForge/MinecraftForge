@@ -5,6 +5,7 @@
 
 package net.minecraftforge.common;
 
+import net.minecraftforge.client.textures.UndersizedSpriteUpscaler;
 import net.minecraftforge.fml.Logging;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 import org.apache.commons.lang3.tuple.Pair;
@@ -109,6 +110,8 @@ public class ForgeConfig {
 
         public final BooleanValue allowMipmapLowering;
 
+        public final ForgeConfigSpec.EnumValue<UndersizedSpriteUpscaler.UpscaleMethod> mipmapUpscalingMethod;
+
         Client(ForgeConfigSpec.Builder builder) {
             builder.comment("Client only settings, mostly things related to rendering")
                    .push("client");
@@ -122,6 +125,16 @@ public class ForgeConfig {
                 .comment("When enabled, Forge will allow mipmaps to be lowered in real-time. This is the default behavior in vanilla. Use this if you experience issues with resource packs that use textures lower than 8x8.")
                 .translation("forge.configgui.allowMipmapLowering")
                 .define("allowMipmapLowering", false);
+
+            StringBuilder stringBuilder = new StringBuilder();
+            for (UndersizedSpriteUpscaler.UpscaleMethod method : UndersizedSpriteUpscaler.UpscaleMethod.values()) {
+                stringBuilder.append(method.getDescription()).append("\n");
+            }
+            mipmapUpscalingMethod = builder
+                    .comment("Below, select the upscaling algorithm to be applied if allowMipmapLowering is set to false.")
+                    .comment(stringBuilder.toString())
+                    .translation("forge.configgui.mipmapUpscalingMethod")
+                    .defineEnum("mipmapUpscalingMethod", UndersizedSpriteUpscaler.UpscaleMethod.MULTIPLY);
 
             builder.pop();
         }
